@@ -447,7 +447,7 @@ export const AgriSmartApp: React.FC = () => {
           </a>
 
           <div className="nav-right">
-            <a href="team.html" className="team-btn">
+            <a href="http://localhost:5173/join-us" className="team-btn">
               Join Our Team
             </a>
           </div>
@@ -456,15 +456,14 @@ export const AgriSmartApp: React.FC = () => {
        
         <main>
           <section className="hero">
-            <div className="eyebrow">
-              <i />
-              From
-            </div>
+            
 
             <h1>
+              From
+              <br />
               Farm to Market,
               <br />
-              <em>Smarter.</em>
+              Smarter.
             </h1>
 
             <p className="sub">
