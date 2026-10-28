@@ -4,6 +4,7 @@ import StoreOrders from "../pages/StoreOrders"
 import JoinUs from "../pages/JoinUs"
 import Harvest from "../pages/FarmerHarvest"
 import Farms from "../pages/Farm"
+import Stores from "../pages/Store"
 
 export default function AppRouter() {
   return (
@@ -20,6 +21,8 @@ export default function AppRouter() {
         <Route path="/farmer-harvest" element={<Harvest />} />
 
         <Route path="/farms" element={<Farms />} />
+
+        <Route path="/stores" element={<Stores />} />
 
        
         <Route path="*" element={<Navigate to="/" replace />} />
