@@ -3,6 +3,7 @@ import LandingHome from "../pages/LandingHome"
 import StoreOrders from "../pages/StoreOrders"
 import JoinUs from "../pages/JoinUs"
 import Harvest from "../pages/FarmerHarvest"
+import Farms from "../pages/Farm"
 
 export default function AppRouter() {
   return (
@@ -18,7 +19,7 @@ export default function AppRouter() {
 
         <Route path="/farmer-harvest" element={<Harvest />} />
 
-        
+        <Route path="/farms" element={<Farms />} />
 
        
         <Route path="*" element={<Navigate to="/" replace />} />
