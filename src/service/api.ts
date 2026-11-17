@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import { refreshTokenCall } from "./auth";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "https://agri-smart-be-git-feature-new-feature-tharusha-s-team.vercel.app/",
   headers: {
     "Content-Type": "application/json",
   },
