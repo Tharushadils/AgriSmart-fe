@@ -1,0 +1,422 @@
+:root {
+  --brand-dark-green: #2c4f24;
+  --brand-dark-green-hover: #223f1c;
+  --brand-olive: #365e2b;
+  --brand-leaf: #38b449;
+  --brand-leaf-bright: #22c55e;
+  --brand-emerald: #10b981;
+  --brand-teal: #14b8a6;
+  --brand-cyan: #38bdf8;
+  --brand-amber: #f59e0b;
+  --brand-rose: #f43f5e;
+
+  /* Light Theme */
+  --header-bg: #ffffff;
+  --hero-bg: #edf3ed;
+  --page-bg: #ffffff;
+  --section-bg: #f9fbf9;
+  --surface-card: #ffffff;
+  --surface-card-subtle: #f8faf8;
+  --card-border: rgba(44, 79, 36, 0.12);
+  --card-border-hover: rgba(44, 79, 36, 0.28);
+  --card-shadow: 0 10px 30px rgba(18, 42, 16, 0.06);
+
+  --stat-card-bg: linear-gradient(135deg, #ebf2fe 0%, #e2ecfd 100%);
+  --stat-card-border: rgba(180, 205, 250, 0.65);
+  --stat-card-text-title: #4a617d;
+  --stat-card-text-value: #162a42;
+
+  --text-primary: #172a15;
+  --text-secondary: #2f4e27;
+  --text-muted: #5e775a;
+  --text-light-sub: #789274;
+
+  --input-bg: #ffffff;
+  --input-border: #d4e0d2;
+  --input-focus-border: #22c55e;
+  --input-focus-ring: rgba(34, 197, 94, 0.18);
+
+  --radius-pill: 9999px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --shadow-card: 0 12px 36px rgba(18, 42, 16, 0.08);
+}
+
+.order-confirm-root.dark-theme {
+  --header-bg: #141b15;
+  --hero-bg: #0e1610;
+  --page-bg: #090e0a;
+  --section-bg: #0d140e;
+  --surface-card: #131c15;
+  --surface-card-subtle: #18231a;
+  --card-border: rgba(74, 222, 128, 0.16);
+  --card-border-hover: rgba(74, 222, 128, 0.35);
+
+  --stat-card-bg: linear-gradient(135deg, #16241b 0%, #111e15 100%);
+  --stat-card-border: rgba(74, 222, 128, 0.2);
+  --stat-card-text-title: #8bb394;
+  --stat-card-text-value: #ecfaee;
+
+  --text-primary: #f0f7f1;
+  --text-secondary: #c2dec6;
+  --text-muted: #8aa68f;
+  --text-light-sub: #637f68;
+
+  --input-bg: #131d14;
+  --input-border: #243826;
+  --input-focus-border: #4ade80;
+  --input-focus-ring: rgba(74, 222, 128, 0.25);
+
+  --shadow-card: 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+.order-confirm-root {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--page-bg);
+  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 1. Header */
+.order-confirm-root .header-wrapper {
+  position: relative;
+  width: 100%;
+  height: 94px;
+  background: transparent;
+  z-index: 30;
+}
+
+@media (min-width: 768px) {
+  .order-confirm-root .header-wrapper {
+    height: 104px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .order-confirm-root .header-wrapper {
+    height: 112px;
+  }
+}
+
+.order-confirm-root .header-bg-svg-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.order-confirm-root .header-bg-svg-wrap svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.order-confirm-root .header-bg-svg-wrap svg path {
+  fill: var(--header-bg);
+  transition: fill 0.3s ease;
+}
+
+.order-confirm-root .top-nav {
+  position: relative;
+  z-index: 5;
+  max-width: 1400px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.order-confirm-root .brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  user-select: none;
+}
+
+.order-confirm-root .logo-sprout-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.order-confirm-root .logo-text {
+  font-family: 'Noto Sans Sinhala', 'Abhaya Libre', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--brand-dark-green);
+  line-height: 1;
+}
+
+.order-confirm-root.dark-theme .logo-text {
+  color: #f0f7f1;
+}
+
+.order-confirm-root .logo-text span {
+  color: var(--brand-leaf);
+}
+
+.order-confirm-root .module-tag {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(34, 197, 94, 0.14);
+  color: #16a34a;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  margin-left: 6px;
+}
+
+.order-confirm-root.dark-theme .module-tag {
+  background: rgba(74, 222, 128, 0.16);
+  color: #4ade80;
+}
+
+.order-confirm-root .nav-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.order-confirm-root .theme-toggle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(44, 79, 36, 0.08);
+  border: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: all 0.25s ease;
+}
+
+.order-confirm-root .theme-toggle-btn:hover {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--brand-leaf);
+  transform: rotate(15deg) scale(1.05);
+}
+
+.order-confirm-root.dark-theme .theme-toggle-btn {
+  background: rgba(74, 222, 128, 0.1);
+  border-color: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+}
+
+.order-confirm-root .nav-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--surface-card);
+  border: 1px solid var(--card-border);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.order-confirm-root .nav-back-link:hover {
+  border-color: var(--brand-leaf-bright);
+  color: var(--brand-leaf);
+  transform: translateX(-2px);
+}
+
+/* 2. Hero Banner */
+.order-confirm-root .page-hero-banner {
+  position: relative;
+  width: 100%;
+  background-color: var(--hero-bg);
+  background: radial-gradient(circle at 15% 30%, rgba(185, 230, 185, 0.35) 0%, transparent 60%),
+    radial-gradient(circle at 85% 70%, rgba(200, 235, 255, 0.3) 0%, transparent 60%),
+    var(--hero-bg);
+  margin-top: -112px;
+  padding: 128px 36px 36px;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .order-confirm-root .page-hero-banner {
+    margin-top: -94px;
+    padding-top: 108px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.order-confirm-root .hero-doodle-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.12;
+  background-image: radial-gradient(#2d6124 1.2px, transparent 1.2px);
+  background-size: 32px 32px;
+}
+
+.order-confirm-root.dark-theme .hero-doodle-bg {
+  opacity: 0.06;
+}
+
+.order-confirm-root .hero-content-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.order-confirm-root .hero-page-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: -0.5px;
+}
+
+.order-confirm-root .hero-page-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 720px;
+  line-height: 1.6;
+}
+
+/* 3. Surface Cards & Container */
+.order-confirm-root .order-confirm-container {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 24px 60px;
+  position: relative;
+  z-index: 2;
+}
+
+.order-confirm-root .surface-card {
+  background: var(--surface-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.order-confirm-root .surface-card:hover {
+  border-color: var(--card-border-hover);
+}
+
+
+
+
+/* ============================================================================
+   4. FLOATING PILL NAVIGATION DOCK (STORE PORTAL)
+   ============================================================================ */
+.order-confirm-root .rp-floating-dock {
+  position: fixed !important;
+  top: auto !important;
+  bottom: 18px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 950 !important;
+  width: max-content;
+  max-width: min(900px, calc(100vw - 28px));
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: none;
+}
+
+.order-confirm-root .rp-floating-pill {
+  pointer-events: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 5px 6px;
+  padding: 8px 14px;
+  border-radius: 26px;
+  background: rgba(235, 244, 236, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: none !important;
+  outline: none !important;
+  box-shadow:
+    0 14px 36px rgba(18, 42, 16, 0.18),
+    0 4px 12px rgba(22, 101, 52, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.order-confirm-root.dark-theme .rp-floating-pill,
+body.dark-theme .order-confirm-root .rp-floating-pill {
+  background: rgba(26, 40, 29, 0.92);
+  border: none !important;
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.78),
+    0 4px 14px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(74, 222, 128, 0.14);
+}
+
+.order-confirm-root .rp-floating-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  color: #2f4e27;
+  text-decoration: none;
+  white-space: nowrap;
+  border: none !important;
+  transition: all 0.2s ease;
+}
+
+.order-confirm-root.dark-theme .rp-floating-item,
+body.dark-theme .order-confirm-root .rp-floating-item {
+  color: #b7d7bc;
+}
+
+.order-confirm-root .rp-floating-item:hover {
+  color: #143412;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.order-confirm-root.dark-theme .rp-floating-item:hover,
+body.dark-theme .order-confirm-root .rp-floating-item:hover {
+  color: #ffffff;
+  background: rgba(74, 222, 128, 0.16);
+}
+
+.order-confirm-root .rp-floating-item.active {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+}
+
+/* Keep content clear of the bottom dock */
+.order-confirm-root .order-confirm-container {
+  padding-bottom: 120px;
+}
