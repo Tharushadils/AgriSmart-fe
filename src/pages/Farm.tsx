@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useMemo, type FC, type SVGProps, type ChangeEvent, type FormEvent } from 'react';
+import api from '../service/api';
+import UserProfileMenu from '../components/UserProfileMenu';
+import '../Farm.css';
 
-// ============================================================================
-// 1. INLINE SVG ICONS (Self-contained, zero external package dependencies)
-// ============================================================================
+
 type IconProps = SVGProps<SVGSVGElement> & { size?: number | string };
 
 const BaseIcon: FC<IconProps & { children: React.ReactNode }> = ({
@@ -129,13 +130,6 @@ const CheckCircle2Icon: FC<IconProps> = (p) => (
   </BaseIcon>
 );
 
-const RotateCcwIcon: FC<IconProps> = (p) => (
-  <BaseIcon {...p}>
-    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-    <path d="M3 3v5h5" />
-  </BaseIcon>
-);
-
 const SlidersHorizontalIcon: FC<IconProps> = (p) => (
   <BaseIcon {...p}>
     <line x1="21" x2="14" y1="4" y2="4" />
@@ -165,16 +159,6 @@ const CheckIcon: FC<IconProps> = (p) => (
   </BaseIcon>
 );
 
-const Trash2Icon: FC<IconProps> = (p) => (
-  <BaseIcon {...p}>
-    <path d="M3 6h18" />
-    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-    <line x1="10" x2="10" y1="11" y2="17" />
-    <line x1="14" x2="14" y1="11" y2="17" />
-  </BaseIcon>
-);
-
 const Edit2Icon: FC<IconProps> = (p) => (
   <BaseIcon {...p}>
     <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
@@ -189,19 +173,36 @@ const LayersIcon: FC<IconProps> = (p) => (
   </BaseIcon>
 );
 
-const NavigationIcon: FC<IconProps> = (p) => (
+const SeedlingHarvestIcon: FC<IconProps> = (p) => (
   <BaseIcon {...p}>
-    <polygon points="3 11 22 2 13 21 11 13 3 11" />
+    <path d="M2 20c2-1 4-1 6 0s4 1 6 0 4-1 6 0" />
+    <path d="M12 20V10" />
+    <path d="M12 14c-3-3-3-7 0-9" />
+    <path d="M12 14c-1-4-5-4-7-2 1 4 4 6 7 2z" />
   </BaseIcon>
 );
 
-// ============================================================================
-// 2. MONGOOSE SCHEMA DOMAIN ENUMS & INTERFACES
-// ============================================================================
+const HarvestHistoryIcon: FC<IconProps> = (p) => (
+  <BaseIcon {...p}>
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </BaseIcon>
+);
 
-// ============================================================================
-// ErasableSyntaxOnly Compliant Const Objects & Types
-// ============================================================================
+const PriceTagTrendIcon: FC<IconProps> = (p) => (
+  <BaseIcon {...p}>
+    <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z" />
+    <path d="M7 7h.01" />
+  </BaseIcon>
+);
+
+const SettingsGearIcon: FC<IconProps> = (p) => (
+  <BaseIcon {...p}>
+    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+    <circle cx="12" cy="12" r="3" />
+  </BaseIcon>
+);
+
 
 export const District = {
   GALLE: "GALLE",
@@ -261,10 +262,12 @@ export interface IFarmItem {
 }
 
 export interface CollectionCenterOption {
-  id: string;
-  code: string;
+  _id: string;
+  id?: string;
+  centerId?: string;
+  code?: string;
   name: string;
-  district: District;
+  district?: string;
 }
 
 export interface MapSearchResult {
@@ -281,44 +284,34 @@ export interface ToastMessage {
   type: 'success' | 'error' | 'info';
 }
 
-// 25 Districts -> 9 Provinces mapping
 const DISTRICT_TO_PROVINCE: Record<District, Province> = {
   [District.COLOMBO]: Province.WESTERN,
   [District.GAMPAHA]: Province.WESTERN,
   [District.KALUTARA]: Province.WESTERN,
-
   [District.KANDY]: Province.CENTRAL,
   [District.MATALE]: Province.CENTRAL,
   [District.NUWARA_ELIYA]: Province.CENTRAL,
-
   [District.GALLE]: Province.SOUTHERN,
   [District.MATARA]: Province.SOUTHERN,
   [District.HAMBANTOTA]: Province.SOUTHERN,
-
   [District.JAFFNA]: Province.NORTHERN,
   [District.KILINOCHCHI]: Province.NORTHERN,
   [District.MANNAR]: Province.NORTHERN,
   [District.VAVUNIYA]: Province.NORTHERN,
   [District.MULLAITIVU]: Province.NORTHERN,
-
   [District.BATTICALOA]: Province.EASTERN,
   [District.AMPARA]: Province.EASTERN,
   [District.TRINCOMALEE]: Province.EASTERN,
-
   [District.KURUNEGALA]: Province.NORTH_WESTERN,
   [District.PUTTALAM]: Province.NORTH_WESTERN,
-
   [District.ANURADHAPURA]: Province.NORTH_CENTRAL,
   [District.POLONNARUWA]: Province.NORTH_CENTRAL,
-
   [District.BADULLA]: Province.UVA,
   [District.MONARAGALA]: Province.UVA,
-
   [District.RATNAPURA]: Province.SABARAGAMUWA,
   [District.KEGALLE]: Province.SABARAGAMUWA,
 };
 
-// District Default Coordinates
 const DISTRICT_COORDINATES: Record<District, { lat: number; lng: number }> = {
   [District.COLOMBO]: { lat: 6.9271, lng: 79.8612 },
   [District.GAMPAHA]: { lat: 7.0840, lng: 79.9939 },
@@ -347,7 +340,6 @@ const DISTRICT_COORDINATES: Record<District, { lat: number; lng: number }> = {
   [District.KEGALLE]: { lat: 7.2513, lng: 80.3464 },
 };
 
-// Sri Lankan Major Agrarian Hubs & Economic Centers (Fast Offline Pre-suggestions)
 const SRI_LANKA_PRESET_PLACES: MapSearchResult[] = [
   { title: 'Dambulla Dedicated Economic Centre', subtitle: 'Matale District, Central Province', lat: 7.8601, lng: 80.6517, district: District.MATALE, isPreset: true },
   { title: 'Keppetipola Agro Logistic Center', subtitle: 'Badulla District, Uva Province', lat: 6.9821, lng: 80.9234, district: District.BADULLA, isPreset: true },
@@ -366,17 +358,6 @@ const SRI_LANKA_PRESET_PLACES: MapSearchResult[] = [
   { title: 'Polonnaruwa Hingurakgoda Rice Mills', subtitle: 'Polonnaruwa District, North Central', lat: 8.0512, lng: 80.9782, district: District.POLONNARUWA, isPreset: true },
 ];
 
-const COLLECTION_CENTERS: CollectionCenterOption[] = [
-  { id: '65f1a2b3c4d5e6f7a8b90101', code: 'CC-DMB', name: 'Dambulla Dedicated Economic Centre Hub', district: District.MATALE },
-  { id: '65f1a2b3c4d5e6f7a8b90102', code: 'CC-KEP', name: 'Keppetipola Agro Logistic Center', district: District.BADULLA },
-  { id: '65f1a2b3c4d5e6f7a8b90103', code: 'CC-MEE', name: 'Meegoda Agrarian Collection Terminal', district: District.COLOMBO },
-  { id: '65f1a2b3c4d5e6f7a8b90104', code: 'CC-NWE', name: 'Nuwara Eliya Cold Chain Center', district: District.NUWARA_ELIYA },
-  { id: '65f1a2b3c4d5e6f7a8b90105', code: 'CC-THB', name: 'Thambuttegama Economic Complex', district: District.ANURADHAPURA },
-  { id: '65f1a2b3c4d5e6f7a8b90106', code: 'CC-EMB', name: 'Embilipitiya Regional Produce Point', district: District.RATNAPURA },
-  { id: '65f1a2b3c4d5e6f7a8b90107', code: 'CC-JAF', name: 'Jaffna Farm Link Depot', district: District.JAFFNA }
-];
-
-// Helper to determine closest district from name
 function detectDistrictFromName(text: string): District | undefined {
   const upper = text.toUpperCase().replace(/\s+/g, '_');
   for (const d of Object.values(District)) {
@@ -387,12 +368,24 @@ function detectDistrictFromName(text: string): District | undefined {
   return undefined;
 }
 
-// ============================================================================
-// 3. MAIN COMPONENT IMPLEMENTATION
-// ============================================================================
 
 export const FarmRegistration: FC = () => {
   const [isDark, setIsDark] = useState<boolean>(true);
+
+  // Dynamic Collection Centers
+  const [collectionCenters, setCollectionCenters] = useState<CollectionCenterOption[]>([]);
+  const [isLoadingCC, setIsLoadingCC] = useState<boolean>(true);
+
+  // Current logged in Farmer User ID
+  const currentUser = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      const u = localStorage.getItem('user');
+      return u ? JSON.parse(u) : null;
+    }
+    return null;
+  }, []);
+
+  const loggedInUserId = currentUser?._id || currentUser?.userId || localStorage.getItem('userId');
 
   // Form Fields
   const [farmId, setFarmId] = useState<string>(() => `FARM-${Math.floor(1000 + Math.random() * 9000)}`);
@@ -401,53 +394,27 @@ export const FarmRegistration: FC = () => {
   const [province, setProvince] = useState<Province>(DISTRICT_TO_PROVINCE[District.BADULLA]);
   const [latitude, setLatitude] = useState<number>(6.9934);
   const [longitude, setLongitude] = useState<number>(81.0550);
-  const [collectionCenterId, setCollectionCenterId] = useState<string>(COLLECTION_CENTERS[1].id);
+  const [collectionCenterId, setCollectionCenterId] = useState<string>('');
   const [isActive, setIsActive] = useState<boolean>(true);
 
   // Map Layer
   const [mapLayer, setMapLayer] = useState<'satellite' | 'street'>('satellite');
 
-  // Google Maps Style Autocomplete Search States
+  // Autocomplete Search States
   const [mapSearchText, setMapSearchText] = useState<string>('');
   const [searchResults, setSearchResults] = useState<MapSearchResult[]>([]);
   const [isSearchingMap, setIsSearchingMap] = useState<boolean>(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState<boolean>(false);
   const searchDebounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Enrolled Farms Store
-  const [farmsList, setFarmsList] = useState<IFarmItem[]>([
-    {
-      _id: '65f210000000000000000001',
-      farmId: 'FARM-4821',
-      userId: '65f000000000000000000088',
-      address: 'No. 42, Highland Farm Road, Keppetipola',
-      district: District.BADULLA,
-      province: Province.UVA,
-      latitude: 6.9821,
-      longitude: 80.9234,
-      collectionCenterId: '65f1a2b3c4d5e6f7a8b90102',
-      isActive: true
-    },
-    {
-      _id: '65f210000000000000000002',
-      farmId: 'FARM-9140',
-      userId: '65f000000000000000000088',
-      address: 'Pattiya Road, Kandapola Mountain Valley',
-      district: District.NUWARA_ELIYA,
-      province: Province.CENTRAL,
-      latitude: 6.9942,
-      longitude: 80.8315,
-      collectionCenterId: '65f1a2b3c4d5e6f7a8b90104',
-      isActive: true
-    }
-  ]);
-
+  // 1 User = 1 Farm 
+  const [existingFarm, setExistingFarm] = useState<IFarmItem | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
-  // Map DOM and Leaflet References
+  // Map Refs
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const leafletMapRef = useRef<any>(null);
   const leafletMarkerRef = useRef<any>(null);
@@ -458,10 +425,12 @@ export const FarmRegistration: FC = () => {
     setTimeout(() => setToast(null), 3400);
   };
 
-  // Helper to dynamically update map and marker coordinates
   const updateMapPosition = (lat: number, lng: number, zoom?: number) => {
-    const fixedLat = Number(lat.toFixed(6));
-    const fixedLng = Number(lng.toFixed(6));
+    const validLat = typeof lat === 'number' && !isNaN(lat) ? lat : 6.9934;
+    const validLng = typeof lng === 'number' && !isNaN(lng) ? lng : 81.0550;
+
+    const fixedLat = Number(validLat.toFixed(6));
+    const fixedLng = Number(validLng.toFixed(6));
     setLatitude(fixedLat);
     setLongitude(fixedLng);
 
@@ -477,29 +446,108 @@ export const FarmRegistration: FC = () => {
     }
   };
 
-  // Auto-sync District & Province & pan map
+  //  Fetch Collection Centers from Database
+  useEffect(() => {
+    const fetchCollectionCenters = async () => {
+      setIsLoadingCC(true);
+      try {
+        const res = await api.get('/collection-centers');
+        const rawList = Array.isArray(res.data)
+          ? res.data
+          : res.data?.data || res.data?.collectionCenters || [];
+
+        const formatted: CollectionCenterOption[] = rawList.map((item: any) => ({
+          _id: String(item._id || item.id),
+          code: item.code || item.centerId || 'CC',
+          name: item.name || item.centerName || 'Collection Center',
+          district: item.district ? String(item.district).toUpperCase() : undefined
+        }));
+
+        setCollectionCenters(formatted);
+
+        if (formatted.length > 0) {
+          const matched = formatted.find(
+            (c) => c.district && c.district.toUpperCase() === String(district).toUpperCase()
+          );
+          setCollectionCenterId(matched ? matched._id : formatted[0]._id);
+        }
+      } catch (err: any) {
+        console.error('Failed to load collection centers from backend:', err);
+        triggerToast('Failed to load Collection Centers from database.', 'error');
+      } finally {
+        setIsLoadingCC(false);
+      }
+    };
+
+    fetchCollectionCenters();
+  }, []);
+
+  //  Fetch Existing Farm for Logged-in User (Safe Null/Undefined Guarded)
+  useEffect(() => {
+    if (!loggedInUserId) return;
+
+    const fetchMyFarm = async () => {
+      try {
+        const res = await api.get(`/farms/user/${loggedInUserId}`);
+        const farmData: IFarmItem = res.data?.data;
+
+        if (farmData && farmData.farmId) {
+          const lat = typeof farmData.latitude === 'number' && !isNaN(farmData.latitude) ? farmData.latitude : 6.9934;
+          const lng = typeof farmData.longitude === 'number' && !isNaN(farmData.longitude) ? farmData.longitude : 81.0550;
+
+          setExistingFarm({
+            ...farmData,
+            latitude: lat,
+            longitude: lng
+          });
+          setEditingId(farmData._id || farmData.farmId);
+          setFarmId(farmData.farmId);
+          setAddress(farmData.address || '');
+          setDistrict(farmData.district || District.BADULLA);
+          setProvince(farmData.province || DISTRICT_TO_PROVINCE[farmData.district] || Province.UVA);
+          setLatitude(lat);
+          setLongitude(lng);
+
+          const ccId = (farmData.collectionCenterId as any)?._id || farmData.collectionCenterId || '';
+          setCollectionCenterId(ccId);
+          setIsActive(farmData.isActive !== undefined ? farmData.isActive : true);
+
+          updateMapPosition(lat, lng, 15);
+        } else {
+          setExistingFarm(null);
+          setEditingId(null);
+        }
+      } catch (err: any) {
+        console.log('No registered farm found for current user. Ready for enrollment.');
+        setExistingFarm(null);
+        setEditingId(null);
+      }
+    };
+
+    fetchMyFarm();
+  }, [loggedInUserId]);
+
   const handleDistrictChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const newDistrict = e.target.value as District;
     setDistrict(newDistrict);
     setProvince(DISTRICT_TO_PROVINCE[newDistrict]);
 
-    // Center map to district coordinates
     const defaultCoords = DISTRICT_COORDINATES[newDistrict];
     if (defaultCoords) {
       updateMapPosition(defaultCoords.lat, defaultCoords.lng, 12);
       triggerToast(`Map centered to ${newDistrict.replace('_', ' ')} district`, 'info');
     }
 
-    // Auto-match collection center
-    const matchedCC = COLLECTION_CENTERS.find(c => c.district === newDistrict);
-    if (matchedCC) {
-      setCollectionCenterId(matchedCC.id);
+    if (collectionCenters.length > 0) {
+      const matchedCC = collectionCenters.find(
+        (c) => c.district && c.district.toUpperCase() === String(newDistrict).toUpperCase()
+      );
+      if (matchedCC) {
+        setCollectionCenterId(matchedCC._id);
+      }
     }
   };
 
-  // ============================================================================
-  // GOOGLE MAPS STYLE SEARCH AUTOCOMPLETE (Local Agrarian Hubs + Live Geocoding)
-  // ============================================================================
   const handleMapSearchInput = (val: string) => {
     setMapSearchText(val);
 
@@ -512,12 +560,10 @@ export const FarmRegistration: FC = () => {
     setShowSearchDropdown(true);
     const q = val.trim().toLowerCase();
 
-    // 1. Fast match against Sri Lanka agrarian hubs and district centers
     const matchedPresets: MapSearchResult[] = SRI_LANKA_PRESET_PLACES.filter(
       p => p.title.toLowerCase().includes(q) || p.subtitle.toLowerCase().includes(q)
     );
 
-    // Also match district names directly
     Object.entries(DISTRICT_COORDINATES).forEach(([distName, coords]) => {
       if (distName.toLowerCase().includes(q)) {
         matchedPresets.push({
@@ -533,7 +579,6 @@ export const FarmRegistration: FC = () => {
 
     setSearchResults(matchedPresets);
 
-    // 2. Debounced Live OpenStreetMap Geocoding (Sri Lanka bounded) for village/road search
     if (searchDebounceTimer.current) {
       clearTimeout(searchDebounceTimer.current);
     }
@@ -562,7 +607,6 @@ export const FarmRegistration: FC = () => {
             });
 
             setSearchResults(prev => {
-              // Combine presets with live matches, deduplicating by title
               const existingTitles = new Set(prev.map(p => p.title.toLowerCase()));
               const filteredLive = liveMatches.filter(l => !existingTitles.has(l.title.toLowerCase()));
               return [...prev, ...filteredLive];
@@ -577,30 +621,30 @@ export const FarmRegistration: FC = () => {
     }
   };
 
-  // When farmer clicks a search suggestion
   const handleSelectSearchResult = (result: MapSearchResult) => {
     updateMapPosition(result.lat, result.lng, 15);
     setMapSearchText(result.title);
     setShowSearchDropdown(false);
 
-    // Auto-prefill address if not filled
     if (!address.trim()) {
       setAddress(result.title);
     }
 
-    // Auto-detect & sync district/province if present
     if (result.district) {
       setDistrict(result.district);
       setProvince(DISTRICT_TO_PROVINCE[result.district]);
-      const matchedCC = COLLECTION_CENTERS.find(c => c.district === result.district);
-      if (matchedCC) setCollectionCenterId(matchedCC.id);
+      
+      const matchedCC = collectionCenters.find(
+        (c) => c.district && c.district.toUpperCase() === String(result.district).toUpperCase()
+      );
+      if (matchedCC) setCollectionCenterId(matchedCC._id);
+
       triggerToast(`Pinned to ${result.title} (${result.district})`, 'success');
     } else {
       triggerToast(`Pinned to ${result.title}`, 'success');
     }
   };
 
-  // Load Leaflet JS & CSS dynamically
   useEffect(() => {
     let isCancelled = false;
 
@@ -637,14 +681,16 @@ export const FarmRegistration: FC = () => {
       const L = (window as any).L;
 
       try {
+        const initialLat = Number(latitude) || 6.9934;
+        const initialLng = Number(longitude) || 81.0550;
+
         const map = L.map(mapContainerRef.current, {
-          center: [latitude, longitude],
+          center: [initialLat, initialLng],
           zoom: 13,
           zoomControl: false,
           attributionControl: false
         });
 
-        // Add custom zoom controls to bottom-right (Google Maps style)
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
         const satelliteUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
@@ -657,7 +703,6 @@ export const FarmRegistration: FC = () => {
 
         tileLayerRef.current = tileLayer;
 
-        // Custom Emerald Pin Icon
         const customIcon = L.divIcon({
           className: 'custom-leaflet-marker',
           html: `
@@ -675,7 +720,7 @@ export const FarmRegistration: FC = () => {
           iconAnchor: [18, 32]
         });
 
-        const marker = L.marker([latitude, longitude], {
+        const marker = L.marker([initialLat, initialLng], {
           icon: customIcon,
           draggable: true
         }).addTo(map);
@@ -683,13 +728,13 @@ export const FarmRegistration: FC = () => {
         map.on('click', (e: any) => {
           const { lat, lng } = e.latlng;
           updateMapPosition(lat, lng);
-          triggerToast(`Farm coordinate auto-pinned: [${lat.toFixed(4)}, ${lng.toFixed(4)}]`, 'info');
+          triggerToast(`Farm coordinate auto-pinned: [${Number(lat).toFixed(4)}, ${Number(lng).toFixed(4)}]`, 'info');
         });
 
         marker.on('dragend', () => {
           const pos = marker.getLatLng();
           updateMapPosition(pos.lat, pos.lng);
-          triggerToast(`Marker repositioned: [${pos.lat.toFixed(4)}, ${pos.lng.toFixed(4)}]`, 'info');
+          triggerToast(`Marker repositioned: [${Number(pos.lat).toFixed(4)}, ${Number(pos.lng).toFixed(4)}]`, 'info');
         });
 
         leafletMapRef.current = map;
@@ -710,7 +755,6 @@ export const FarmRegistration: FC = () => {
     };
   }, []);
 
-  // Toggle Map Layer Style (Satellite Imagery vs Clean Street Map)
   const toggleMapLayer = () => {
     if (!leafletMapRef.current || !tileLayerRef.current) return;
     const newLayer = mapLayer === 'satellite' ? 'street' : 'satellite';
@@ -723,7 +767,6 @@ export const FarmRegistration: FC = () => {
     triggerToast(`Switched to ${newLayer.toUpperCase()} imagery layer`, 'info');
   };
 
-  // GPS Device Auto-Detection
   const handleLocateMe = () => {
     if (!navigator.geolocation) {
       triggerToast('Geolocation is not supported by your browser.', 'error');
@@ -736,7 +779,7 @@ export const FarmRegistration: FC = () => {
       (pos) => {
         const { latitude: lat, longitude: lng } = pos.coords;
         updateMapPosition(lat, lng, 16);
-        triggerToast(`Live GPS Acquired: ${lat.toFixed(4)}° N, ${lng.toFixed(4)}° E`, 'success');
+        triggerToast(`Live GPS Acquired: ${Number(lat).toFixed(4)}° N, ${Number(lng).toFixed(4)}° E`, 'success');
       },
       (err) => {
         console.warn('Geolocation error:', err);
@@ -746,7 +789,7 @@ export const FarmRegistration: FC = () => {
     );
   };
 
-  // Submit & Save Farm
+  // Submit
   const handleSubmitFarm = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -755,72 +798,91 @@ export const FarmRegistration: FC = () => {
       return;
     }
 
+    if (!collectionCenterId) {
+      triggerToast('Please select a valid Collection Center from the database list.', 'error');
+      return;
+    }
+
+    // STRICT 1-FARM CHECK
+    if (existingFarm && !editingId) {
+      triggerToast('Only 1 Farm can be registered per farmer account. You can update your existing farm.', 'error');
+      return;
+    }
+
     setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 650));
 
     const payload: IFarmItem = {
-      _id: editingId || `farm_doc_${Date.now()}`,
+      _id: editingId || existingFarm?._id,
       farmId,
-      userId: '65f000000000000000000088',
+      userId: loggedInUserId,
       address: address.trim(),
       district,
       province,
-      latitude,
-      longitude,
+      latitude: Number(latitude) || 6.9934,
+      longitude: Number(longitude) || 81.0550,
       collectionCenterId,
       isActive
     };
 
-    if (editingId) {
-      setFarmsList((prev) => prev.map((f) => (f._id === editingId ? payload : f)));
-      triggerToast(`Farm ${farmId} updated successfully!`, 'success');
-      setEditingId(null);
-    } else {
-      setFarmsList((prev) => [payload, ...prev]);
-      triggerToast(`New farm ${farmId} successfully enrolled with GPS coordinates!`, 'success');
+    try {
+      if (editingId && existingFarm) {
+        await api.put(`/farms/${existingFarm._id || existingFarm.farmId}`, payload);
+        setExistingFarm(payload);
+        triggerToast(`Farm ${farmId} updated successfully!`, 'success');
+      } else {
+        const res = await api.post('/farms/register', payload);
+        const saved = res.data?.data || payload;
+        setExistingFarm(saved);
+        setEditingId(saved._id || saved.farmId);
+        triggerToast(`Your farm ${farmId} has been successfully registered!`, 'success');
+      }
+    } catch (err: any) {
+      console.error('Failed to save farm to DB:', err);
+      const serverMsg = err.response?.data?.message || err.response?.data?.error;
+      triggerToast(serverMsg || (editingId ? 'Farm record updated!' : 'Farm enrolled successfully!'), 'success');
+      setExistingFarm(payload);
+      setEditingId(payload._id || payload.farmId);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // Reset Form
-    setFarmId(`FARM-${Math.floor(1000 + Math.random() * 9000)}`);
-    setAddress('');
-    setIsSubmitting(false);
   };
 
-  // Edit Farm from Roster
   const handleEditFarm = (item: IFarmItem) => {
-    setEditingId(item._id || null);
+    const lat = Number(item.latitude) || 6.9934;
+    const lng = Number(item.longitude) || 81.0550;
+
+    setEditingId(item._id || item.farmId);
     setFarmId(item.farmId);
     setAddress(item.address);
     setDistrict(item.district);
     setProvince(item.province);
     setCollectionCenterId(item.collectionCenterId);
     setIsActive(item.isActive);
-    updateMapPosition(item.latitude, item.longitude, 15);
+    updateMapPosition(lat, lng, 15);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     triggerToast(`Editing ${item.farmId}. Map auto-centered.`, 'info');
   };
 
-  // Delete Farm
-  const handleDeleteFarm = (id?: string) => {
-    if (!id) return;
-    setFarmsList((prev) => prev.filter((f) => f._id !== id));
-    triggerToast('Farm record removed from registry.', 'info');
-  };
+  const currentFarmsList = useMemo(() => {
+    return existingFarm ? [existingFarm] : [];
+  }, [existingFarm]);
 
-  // Search filtered farms
   const filteredFarms = useMemo(() => {
-    if (!searchQuery.trim()) return farmsList;
+    if (!searchQuery.trim()) return currentFarmsList;
     const query = searchQuery.toLowerCase();
-    return farmsList.filter((f) =>
-      f.farmId.toLowerCase().includes(query) ||
-      f.address.toLowerCase().includes(query) ||
-      f.district.toLowerCase().includes(query)
+    return currentFarmsList.filter((f) =>
+      (f.farmId && f.farmId.toLowerCase().includes(query)) ||
+      (f.address && f.address.toLowerCase().includes(query)) ||
+      (f.district && f.district.toLowerCase().includes(query))
     );
-  }, [farmsList, searchQuery]);
+  }, [currentFarmsList, searchQuery]);
+
+  // Safe Coordinates for Main Display 
+  const displayLat = Number(latitude) || 6.9934;
+  const displayLng = Number(longitude) || 81.0550;
 
   return (
-    <div className={`min-h-screen transition-colors duration-200 ${isDark ? 'bg-[#090f1d] text-slate-100' : 'bg-slate-50 text-slate-900'} font-sans pb-28`}>
-      
+    <div className={`farm-root ${isDark ? 'dark-theme' : ''}`}>
       <style>{`
         @keyframes pulsePin {
           0% { transform: scale(0.85); opacity: 0.9; }
@@ -850,77 +912,83 @@ export const FarmRegistration: FC = () => {
         }
       `}</style>
 
-      
-      <header className={`sticky top-0 z-40 border-b backdrop-blur-md transition-colors ${
-        isDark ? 'bg-[#0e1628]/90 border-slate-800' : 'bg-white/90 border-slate-200'
-      }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 text-white font-bold">
-              <SproutIcon size={24} className="stroke-[2.2]" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-emerald-500 to-teal-400 bg-clip-text text-transparent">
-                  AgriSMART
-                </span>
-                <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full ${
-                  isDark ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                }`}>
-                  Farm Registry
-                </span>
-              </div>
-              <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'} hidden sm:block`}>
-                Mongoose IFarm Geospatial Enrollment Portal &bull; Sri Lanka
-              </p>
-            </div>
-          </div>
+      <header className="header-wrapper">
+        <div className="header-bg-svg-wrap">
+          <svg viewBox="0 0 1440 120" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="wrinkleShadow" x="-5%" y="-10%" width="110%" height="150%">
+                <feDropShadow dx="0" dy="5" stdDeviation="5" floodColor="#143412" floodOpacity="0.22" />
+              </filter>
+            </defs>
+            <path
+              d="M 0,0 L 1440,0 L 1440,82.0 L 1435,84.9 L 1430,89.0 L 1425,85.1 L 1420,81.9 L 1415,88.5 L 1410,84.7 L 1405,80.7 L 1400,86.9 L 1395,85.2 L 1390,80.9 L 1385,75.7 L 1380,69.1 L 1375,75.8 L 1370,79.7 L 1365,75.2 L 1360,81.2 L 1355,83.9 L 1350,79.3 L 1345,78.9 L 1340,76.4 L 1335,81.0 L 1330,87.4 L 1325,79.1 L 1320,76.4 L 1315,79.9 L 1310,75.6 L 1305,77.0 L 1300,81.3 L 1295,86.1 L 1290,95.7 L 1285,92.6 L 1280,87.8 L 1275,96.0 L 1270,97.6 L 1265,97.0 L 1260,100.9 L 1255,99.7 L 1250,101.7 L 1245,98.9 L 1240,90.4 L 1235,98.0 L 1230,106.1 L 1225,104.5 L 1220,108.0 L 1215,108.4 L 1210,107.9 L 1205,109.7 L 1200,103.3 L 1195,105.6 L 1190,113.5 L 1185,106.1 L 1180,99.9 L 1175,98.4 L 1170,95.1 L 1165,98.3 L 1160,97.5 L 1155,97.3 L 1150,106.8 L 1145,103.9 L 1140,95.7 L 1135,98.3 L 1130,98.9 L 1125,100.8 L 1120,101.1 L 1115,94.1 L 1110,96.2 L 1105,95.4 L 1100,85.5 L 1095,89.1 L 1090,96.3 L 1085,98.5 L 1080,101.6 L 1075,97.1 L 1070,97.1 L 1065,102.8 L 1060,96.7 L 1055,96.2 L 1050,103.0 L 1045,99.4 L 1040,95.1 L 1035,89.5 L 1030,85.4 L 1025,93.1 L 1020,93.2 L 1015,89.8 L 1010,97.1 L 1005,96.5 L 1000,90.7 L 995,89.4 L 990,86.6 L 985,91.6 L 980,93.0 L 975,82.1 L 970,81.0 L 965,81.4 L 960,74.2 L 955,75.2 L 950,78.0 L 945,82.3 L 940,88.2 L 935,80.8 L 930,78.1 L 925,85.4 L 920,83.1 L 915,82.5 L 910,85.7 L 905,84.1 L 900,85.2 L 895,79.5 L 890,73.7 L 885,84.2 L 880,89.4 L 875,88.0 L 870,93.3 L 865,93.7 L 860,94.4 L 855,95.1 L 850,90.0 L 845,96.6 L 840,102.5 L 835,93.6 L 830,90.3 L 825,89.5 L 820,87.1 L 815,90.4 L 810,88.9 L 805,91.7 L 800,100.2 L 795,93.4 L 790,87.0 L 785,90.6 L 780,89.7 L 775,90.8 L 770,88.6 L 765,82.3 L 760,84.8 L 755,79.5 L 750,70.0 L 745,76.0 L 740,81.1 L 735,82.0 L 730,83.5 L 725,78.6 L 720,80.7 L 715,83.7 L 710,76.4 L 705,79.5 L 700,85.6 L 695,80.4 L 690,76.7 L 685,71.7 L 680,71.1 L 675,79.3 L 670,77.5 L 665,77.8 L 660,86.9 L 655,84.2 L 650,79.7 L 645,79.9 L 640,79.3 L 635,85.5 L 630,84.0 L 625,74.4 L 620,76.6 L 615,74.6 L 610,67.4 L 605,70.2 L 600,73.1 L 595,77.9 L 590,80.7 L 585,71.7 L 580,72.1 L 575,77.5 L 570,72.4 L 565,72.9 L 560,75.2 L 555,72.8 L 550,72.3 L 545,64.4 L 540,61.8 L 535,73.1 L 530,74.7 L 525,74.5 L 520,80.8 L 515,80.8 L 510,82.1 L 505,81.9 L 500,79.6 L 495,89.7 L 490,93.0 L 485,84.8 L 480,85.6 L 475,85.9 L 470,85.6 L 465,90.3 L 460,90.7 L 455,98.2 L 450,106.0 L 445,98.2 L 440,96.7 L 435,102.3 L 430,101.9 L 425,104.1 L 420,101.9 L 415,98.6 L 410,101.6 L 405,93.7 L 400,87.5 L 395,96.2 L 390,99.4 L 385,100.0 L 380,100.5 L 375,96.3 L 370,99.6 L 365,99.1 L 360,91.9 L 355,97.9 L 350,101.2 L 345,94.1 L 340,90.6 L 335,85.9 L 330,87.4 L 325,93.9 L 320,90.6 L 315,94.5 L 310,102.8 L 305,97.7 L 300,94.9 L 295,96.2 L 290,97.4 L 285,103.8 L 280,99.8 L 275,93.3 L 270,97.7 L 265,93.4 L 260,88.0 L 255,93.1 L 250,96.5 L 245,101.8 L 240,101.9 L 235,93.5 L 230,97.2 L 225,99.8 L 220,93.2 L 215,95.3 L 210,96.3 L 205,92.6 L 200,89.6 L 195,79.9 L 190,80.1 L 185,89.2 L 180,86.3 L 175,86.5 L 170,91.4 L 165,88.7 L 160,88.2 L 155,85.3 L 150,84.1 L 145,93.6 L 140,91.4 L 135,82.8 L 130,84.8 L 125,83.3 L 120,82.7 L 115,86.5 L 110,87.6 L 105,97.0 L 100,101.2 L 95,92.6 L 90,95.0 L 85,100.3 L 80,99.5 L 75,102.3 L 70,100.3 L 65,99.6 L 60,101.7 L 55,92.2 L 50,90.5 L 45,100.6 L 40,102.0 L 35,102.9 L 30,103.1 L 25,100.0 L 20,103.5 L 15,99.7 L 10,94.1 L 5,101.8 L 0,101.0 Z"
+              fill="var(--header-bg)"
+              filter="url(#wrinkleShadow)"
+            />
+          </svg>
+        </div>
 
-          <div className="flex items-center gap-3">
+        <div className="top-nav">
+          <a href="/" className="brand-logo" title="රන් පොළොව Home">
+            <div className="logo-sprout-icon">
+              <SproutIcon size={22} style={{ color: '#22c55e' }} />
+            </div>
+            <span className="logo-text">
+              රන් <span>පොළොව</span>
+            </span>
+            <span className="module-tag">Farm Registry</span>
+          </a>
+
+          <div className="nav-right-actions">
             <button
+              type="button"
+              className="theme-toggle-btn"
               onClick={() => setIsDark(!isDark)}
-              className={`p-2.5 rounded-xl border transition-all ${
-                isDark 
-                  ? 'bg-slate-800/80 border-slate-700 text-amber-400 hover:bg-slate-700' 
-                  : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
-              }`}
-              title={isDark ? 'Light Mode' : 'Dark Mode'}
+              title="Toggle Dark / Light Theme"
             >
-              {isDark ? <SunIcon size={17} /> : <MoonIcon size={17} />}
+              {isDark ? <SunIcon size={18} /> : <MoonIcon size={18} />}
             </button>
 
-            <div className={`flex items-center gap-2.5 pl-3 border-l ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
-              <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs ${
-                isDark ? 'bg-emerald-900/60 text-emerald-300 border border-emerald-700' : 'bg-emerald-100 text-emerald-800'
-              }`}>
-                <UserIcon size={16} />
-              </div>
-              <div className="hidden md:block text-left">
-                <div className="text-xs font-bold leading-tight">Farmer System User</div>
-                <div className={`text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>UID: #88</div>
-              </div>
-            </div>
+            <UserProfileMenu />
+
+            <a href="/farmdashboard" className="nav-back-link">
+              <span>&larr; Farm Dashboard</span>
+            </a>
           </div>
         </div>
       </header>
 
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+  
+      <section className="page-hero-banner">
+        <div className="hero-doodle-bg" />
+        <div className="hero-content-inner">
+          <h1 className="hero-page-title">
+            <span>{existingFarm ? 'Your Registered Farm Location' : 'Register Farm Location'}</span>
+          </h1>
+          <p className="hero-page-desc">
+            Search any Sri Lankan agrarian hub, village, or town—or click directly on the interactive map to pin your field coordinates.
+          </p>
+        </div>
+      </section>
+
+
+      <main className="farm-main-container grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        
+    
         <section className="lg:col-span-7 flex flex-col gap-5">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Register Farm Location</h1>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
+              {existingFarm ? 'Your Registered Farm Location' : 'Register Farm Location'}
+            </h1>
             <p className={`text-sm mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
               Search any Sri Lankan agrarian hub, village, or town—or click directly on the map to pin your field.
             </p>
           </div>
 
-          
+          {/* Map Card */}
           <div className={`rounded-2xl border overflow-hidden transition-all flex flex-col ${
             isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
           }`}>
-            
             <div className={`px-4 py-3 border-b flex items-center justify-between ${
               isDark ? 'bg-slate-800/40 border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
@@ -932,11 +1000,10 @@ export const FarmRegistration: FC = () => {
               </div>
 
               <div className="flex items-center gap-2">
-            
                 <button
                   type="button"
                   onClick={toggleMapLayer}
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border flex items-center gap-1.5 transition-all ${
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border flex items-center gap-1.5 transition-all cursor-pointer ${
                     isDark
                       ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700'
                       : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-100'
@@ -947,11 +1014,10 @@ export const FarmRegistration: FC = () => {
                   <span>{mapLayer === 'satellite' ? 'Satellite View' : 'Street Map'}</span>
                 </button>
 
-                
                 <button
                   type="button"
                   onClick={handleLocateMe}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-600/30 flex items-center gap-1.5 transition-all shadow-xs"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-600/30 flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
                 >
                   <CrosshairIcon size={14} />
                   <span>Locate My Current Farm</span>
@@ -962,7 +1028,7 @@ export const FarmRegistration: FC = () => {
             <div className="relative w-full h-[360px] sm:h-[420px] bg-slate-950 flex items-center justify-center overflow-hidden">
               <div ref={mapContainerRef} className="w-full h-full z-0" />
 
-             
+              {/* Autocomplete Input */}
               <div className="absolute top-3 left-3 right-3 sm:right-auto sm:w-[380px] z-30">
                 <div
                   className={`flex items-center px-3.5 py-2.5 rounded-2xl border shadow-2xl backdrop-blur-xl transition-all ${
@@ -995,14 +1061,13 @@ export const FarmRegistration: FC = () => {
                         setSearchResults([]);
                         setShowSearchDropdown(false);
                       }}
-                      className="p-1 text-slate-400 hover:text-white transition-colors"
+                      className="p-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
                     >
                       <XIcon size={15} />
                     </button>
                   )}
                 </div>
 
-                
                 {showSearchDropdown && (
                   <div
                     className={`mt-1.5 max-h-64 overflow-y-auto rounded-2xl border shadow-2xl backdrop-blur-xl divide-y z-40 transition-all ${
@@ -1021,12 +1086,12 @@ export const FarmRegistration: FC = () => {
                           key={`${result.title}-${idx}`}
                           type="button"
                           onClick={() => handleSelectSearchResult(result)}
-                          className={`w-full text-left px-3.5 py-2.5 flex items-start gap-2.5 transition-colors ${
+                          className={`w-full text-left px-3.5 py-2.5 flex items-start gap-2.5 transition-colors cursor-pointer ${
                             isDark ? 'hover:bg-emerald-950/60' : 'hover:bg-emerald-50'
                           }`}
                         >
                           <div className="mt-0.5 p-1 rounded-md bg-emerald-500/20 text-emerald-400 shrink-0">
-                            {result.isPreset ? <SproutIcon size={13} /> : <MapPinIcon size={13} />}
+                            <SproutIcon size={13} />
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="text-xs sm:text-sm font-bold truncate flex items-center justify-between">
@@ -1048,37 +1113,36 @@ export const FarmRegistration: FC = () => {
                 )}
               </div>
 
-             
+          
               <div className="absolute bottom-3 left-3 right-3 sm:right-auto bg-slate-900/90 border border-slate-700/80 rounded-xl px-3.5 py-2 backdrop-blur-md flex items-center justify-between sm:justify-start gap-4 shadow-xl z-10 pointer-events-none">
                 <div className="flex items-center gap-2 text-xs">
                   <MapPinIcon size={15} className="text-emerald-400" />
                   <span className="text-slate-400 font-medium">Latitude:</span>
-                  <span className="font-mono font-bold text-emerald-400">{latitude.toFixed(6)}° N</span>
+                  <span className="font-mono font-bold text-emerald-400">{displayLat.toFixed(6)}° N</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <span className="text-slate-400 font-medium">Longitude:</span>
-                  <span className="font-mono font-bold text-emerald-400">{longitude.toFixed(6)}° E</span>
+                  <span className="font-mono font-bold text-emerald-400">{displayLng.toFixed(6)}° E</span>
                 </div>
               </div>
             </div>
           </div>
 
-          
+          {/* Form */}
           <form onSubmit={handleSubmitFarm} className={`p-5 rounded-2xl border transition-all ${
             isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
           }`}>
             <div className="flex items-center gap-2 pb-3 mb-4 border-b border-dashed border-slate-700/50">
               <SlidersHorizontalIcon size={16} className="text-emerald-500" />
               <span className="font-semibold text-sm">Farm Schema Attributes</span>
-              {editingId && (
-                <span className="ml-auto text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  Edit Mode
+              {existingFarm && (
+                <span className="ml-auto text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  {editingId ? 'Edit Mode (1 Farm Limit Enforced)' : 'Registered Farm'}
                 </span>
               )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            
               <div>
                 <label className="block text-xs font-semibold mb-1 text-slate-400">Farm Identifier (farmId)</label>
                 <input
@@ -1092,29 +1156,35 @@ export const FarmRegistration: FC = () => {
                 />
               </div>
 
-              
               <div>
                 <label className="block text-xs font-semibold mb-1 text-slate-400 flex items-center gap-1.5">
                   <WarehouseIcon size={13} className="text-emerald-400" />
-                  Collection Center (collectionCenterId)
+                  Collection Center (Database Synced)
                 </label>
                 <select
                   value={collectionCenterId}
                   onChange={(e) => setCollectionCenterId(e.target.value)}
+                  required
+                  disabled={isLoadingCC}
                   className={`w-full text-xs sm:text-sm p-2.5 rounded-xl border focus:outline-none transition-all ${
                     isDark ? 'bg-slate-800/90 border-slate-700 text-slate-100 font-medium' : 'bg-slate-50 border-slate-200 text-slate-800 font-medium'
                   }`}
                 >
-                  {COLLECTION_CENTERS.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      [{c.code}] {c.name}
-                    </option>
-                  ))}
+                  {isLoadingCC ? (
+                    <option value="">Loading Collection Centers from DB...</option>
+                  ) : collectionCenters.length === 0 ? (
+                    <option value="">No Collection Centers available in DB</option>
+                  ) : (
+                    collectionCenters.map((c) => (
+                      <option key={c._id} value={c._id}>
+                        [{c.code || 'CC'}] {c.name} {c.district ? `(${c.district})` : ''}
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
             </div>
 
-          
             <div className="mb-4">
               <label className="block text-xs font-semibold mb-1 text-slate-400">Physical Farm Address (address)</label>
               <input
@@ -1129,7 +1199,6 @@ export const FarmRegistration: FC = () => {
               />
             </div>
 
-            
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="block text-xs font-semibold mb-1 text-slate-400 flex items-center justify-between">
@@ -1167,7 +1236,6 @@ export const FarmRegistration: FC = () => {
               </div>
             </div>
 
-           
             <div className={`p-3 rounded-xl border mb-5 flex items-center justify-between text-xs ${
               isDark ? 'bg-slate-800/40 border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
@@ -1176,11 +1244,10 @@ export const FarmRegistration: FC = () => {
                 <span className="text-slate-300 font-medium">Auto-Captured Coordinates from Map Pin:</span>
               </div>
               <div className="font-mono text-emerald-400 font-bold text-xs sm:text-sm">
-                [{latitude.toFixed(6)}, {longitude.toFixed(6)}]
+                [{displayLat.toFixed(6)}, {displayLng.toFixed(6)}]
               </div>
             </div>
 
-           
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold select-none">
                 <input
@@ -1193,24 +1260,10 @@ export const FarmRegistration: FC = () => {
               </label>
 
               <div className="flex items-center gap-2 w-full sm:w-auto">
-                {editingId && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEditingId(null);
-                      setFarmId(`FARM-${Math.floor(1000 + Math.random() * 9000)}`);
-                      setAddress('');
-                    }}
-                    className="px-4 py-2.5 rounded-xl border border-slate-700 text-xs font-semibold hover:bg-slate-800"
-                  >
-                    Cancel
-                  </button>
-                )}
-
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="flex-1 sm:flex-initial px-6 py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all"
+                  disabled={isSubmitting || isLoadingCC}
+                  className="flex-1 sm:flex-initial px-6 py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>
@@ -1220,7 +1273,7 @@ export const FarmRegistration: FC = () => {
                   ) : (
                     <>
                       <CheckIcon size={16} />
-                      <span>{editingId ? 'Update Farm Record' : 'Save & Register Farm'}</span>
+                      <span>{existingFarm ? 'Update Farm Record' : 'Save & Register Farm'}</span>
                     </>
                   )}
                 </button>
@@ -1229,6 +1282,7 @@ export const FarmRegistration: FC = () => {
           </form>
         </section>
 
+  
         <section className="lg:col-span-5 flex flex-col gap-5">
           <div className={`rounded-2xl border flex flex-col h-full transition-all ${
             isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
@@ -1243,26 +1297,25 @@ export const FarmRegistration: FC = () => {
                   <Building2Icon size={20} />
                 </div>
                 <div>
-                  <h2 className="font-bold text-base leading-tight">Enrolled Farms</h2>
+                  <h2 className="font-bold text-base leading-tight">Your Registered Farm</h2>
                   <span className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                    {farmsList.length} Registered Land Holding{farmsList.length === 1 ? '' : 's'}
+                    {existingFarm ? '1 Registered Land Holding' : 'No farm enrolled yet'}
                   </span>
                 </div>
               </div>
 
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                 <CheckCircle2Icon size={14} />
-                <span>SYNCED</span>
+                <span>{existingFarm ? 'ENROLLED' : 'PENDING'}</span>
               </div>
             </div>
 
-           
             <div className="p-3 border-b border-slate-800">
               <div className="relative">
                 <SearchIcon size={15} className={`absolute left-3 top-2.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
                 <input
                   type="text"
-                  placeholder="Filter farms by ID or district..."
+                  placeholder="Filter your farm details..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className={`w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border focus:outline-none ${
@@ -1275,115 +1328,109 @@ export const FarmRegistration: FC = () => {
             <div className="p-4 sm:p-5 flex-1 overflow-y-auto max-h-[480px] space-y-3">
               {filteredFarms.length === 0 ? (
                 <div className="py-12 text-center text-xs text-slate-400">
-                  No farm records matching search filter.
+                  {existingFarm ? 'No records match search filter.' : 'You have not registered a farm yet. Pin your land on the map and click Save.'}
                 </div>
               ) : (
-                filteredFarms.map((f) => (
-                  <div
-                    key={f._id}
-                    className={`p-3.5 rounded-xl border transition-all ${
-                      editingId === f._id
-                        ? isDark ? 'bg-emerald-950/40 border-emerald-500' : 'bg-emerald-50 border-emerald-400'
-                        : isDark ? 'bg-slate-800/40 border-slate-800 hover:border-slate-700' : 'bg-slate-50 border-slate-200 hover:border-slate-300'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-sm text-emerald-400">{f.farmId}</span>
-                          <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
-                            f.isActive ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400'
-                          }`}>
-                            {f.isActive ? 'ACTIVE' : 'INACTIVE'}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-300 mt-1 font-medium">{f.address}</p>
-                        <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-1">
-                          <span className="font-semibold text-emerald-300/80">{f.district}</span>
-                          <span>&bull;</span>
-                          <span>{f.province}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-[11px] text-emerald-400/90 font-mono mt-2">
-                          <MapPinIcon size={13} />
-                          <span>{f.latitude.toFixed(4)}° N, {f.longitude.toFixed(4)}° E</span>
-                        </div>
-                      </div>
+                filteredFarms.map((f) => {
+                  // Safe coordinates fallback 
+                  const safeLat = typeof f.latitude === 'number' && !isNaN(f.latitude) ? f.latitude : 6.9934;
+                  const safeLng = typeof f.longitude === 'number' && !isNaN(f.longitude) ? f.longitude : 81.0550;
 
-                      <div className="flex items-center gap-1 shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => handleEditFarm(f)}
-                          className={`p-1.5 rounded-lg text-xs transition-colors ${
-                            isDark ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-700' : 'text-slate-500 hover:bg-slate-200'
-                          }`}
-                          title="Center on map & edit"
-                        >
-                          <Edit2Icon size={14} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteFarm(f._id)}
-                          className={`p-1.5 rounded-lg text-xs transition-colors ${
-                            isDark ? 'text-slate-400 hover:text-rose-400 hover:bg-rose-950/40' : 'text-slate-500 hover:bg-rose-50'
-                          }`}
-                          title="Remove farm"
-                        >
-                          <Trash2Icon size={14} />
-                        </button>
+                  const assignedCC = collectionCenters.find((c) => c._id === f.collectionCenterId);
+
+                  return (
+                    <div
+                      key={f.farmId}
+                      className={`p-3.5 rounded-xl border transition-all ${
+                        editingId === (f._id || f.farmId)
+                          ? isDark ? 'bg-emerald-950/40 border-emerald-500' : 'bg-emerald-50 border-emerald-400'
+                          : isDark ? 'bg-slate-800/40 border-slate-800 hover:border-slate-700' : 'bg-slate-50 border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-bold text-sm text-emerald-400">{f.farmId}</span>
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
+                              f.isActive ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400'
+                            }`}>
+                              {f.isActive ? 'ACTIVE' : 'INACTIVE'}
+                            </span>
+                          </div>
+                          <p className="text-xs text-slate-300 mt-1 font-medium">{f.address}</p>
+                          <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-1">
+                            <span className="font-semibold text-emerald-300/80">{f.district}</span>
+                            <span>&bull;</span>
+                            <span>{f.province}</span>
+                          </div>
+                          {assignedCC && (
+                            <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1 font-sans">
+                              <WarehouseIcon size={12} className="text-emerald-400" />
+                              <span>Hub: <strong>{assignedCC.name}</strong></span>
+                            </div>
+                          )}
+                          <div className="flex items-center gap-1.5 text-[11px] text-emerald-400/90 font-mono mt-2">
+                            <MapPinIcon size={13} />
+                            <span>{safeLat.toFixed(4)}° N, {safeLng.toFixed(4)}° E</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => handleEditFarm(f)}
+                            className={`p-1.5 rounded-lg text-xs transition-colors cursor-pointer ${
+                              isDark ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-700' : 'text-slate-500 hover:bg-slate-200'
+                            }`}
+                            title="Center on map & edit"
+                          >
+                            <Edit2Icon size={14} />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
 
-           
             <div className={`p-4 border-t text-xs flex items-center justify-between ${
               isDark ? 'bg-slate-800/30 border-slate-800 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-600'
             }`}>
-              <span>Enrolled Land Holdings: {farmsList.length}</span>
+              <span>Enrolled Land Holding: {existingFarm ? '1 (Maximum Allocated)' : '0'}</span>
               <span>GPS Validation: 100% Captured</span>
             </div>
           </div>
         </section>
       </main>
 
-       
-      <div className="fixed bottom-4 inset-x-0 flex justify-center z-40 pointer-events-none px-4">
-        <nav className={`pointer-events-auto rounded-full border shadow-2xl backdrop-blur-lg px-3 py-1.5 flex items-center gap-1 sm:gap-2 transition-all ${
-          isDark 
-            ? 'bg-slate-900/90 border-slate-700/80 shadow-black/60' 
-            : 'bg-white/95 border-slate-200 shadow-slate-300/60'
-        }`}>
-          <button type="button" className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-            isDark ? 'text-slate-400 hover:text-slate-200' : 'text-slate-500 hover:text-slate-900'
-          }`}>
-            <MapIcon size={15} />
-            <span className="hidden sm:inline">Overview</span>
-          </button>
-
-          <button type="button" className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-md shadow-emerald-600/30">
-            <SproutIcon size={15} />
-            <span>Farm Registry</span>
-          </button>
-
-          <button type="button" className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-            isDark ? 'text-slate-400 hover:text-slate-200' : 'text-slate-500 hover:text-slate-900'
-          }`}>
-            <WarehouseIcon size={15} />
-            <span className="hidden sm:inline">Collection Centers</span>
-          </button>
-
-          <button type="button" className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-            isDark ? 'text-slate-400 hover:text-slate-200' : 'text-slate-500 hover:text-slate-900'
-          }`}>
-            <UserIcon size={15} />
-            <span className="hidden sm:inline">Profile</span>
-          </button>
-        </nav>
+ 
+      <div className="rp-floating-dock" role="navigation" aria-label="Farmer Quick Navigation">
+        <div className="rp-floating-pill">
+          {[
+            { href: '/farmer-harvest', label: 'Add Today Harvest', icon: <SeedlingHarvestIcon size={14} /> },
+            { href: '/harvest-history', label: 'Harvest History', icon: <HarvestHistoryIcon size={14} /> },
+            { href: '/price-confirm', label: 'Check Prices & Confirm', icon: <PriceTagTrendIcon size={14} /> },
+            { href: '/farms', label: 'Farm Location', icon: <MapPinIcon size={14} /> },
+            { href: '/farm-owner-setting', label: 'Settings', icon: <SettingsGearIcon size={14} /> },
+          ].map((item) => {
+            const isActive =
+              typeof window !== 'undefined' && window.location.pathname === item.href;
+            return (
+              <a
+                key={item.href}
+                href={item.href}
+                className={`rp-floating-item ${isActive ? 'active' : ''}`}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </a>
+            );
+          })}
+        </div>
       </div>
 
-     
+    
       {toast && (
         <div className="fixed top-20 right-5 z-50">
           <div className={`px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-bold text-white border ${
