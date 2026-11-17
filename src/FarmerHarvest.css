@@ -1,0 +1,1684 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Brand Colors derived from Agri SMART Design System */
+    --brand-dark-green: #2c4f24;
+    --brand-dark-green-hover: #223f1c;
+    --brand-olive: #365e2b;
+    --brand-leaf: #38b449;
+    --brand-leaf-bright: #22c55e;
+    --brand-emerald: #10b981;
+    --brand-teal: #14b8a6;
+    --brand-cyan: #38bdf8;
+    --brand-amber: #f59e0b;
+    --brand-amber-deep: #d97706;
+    --brand-rose: #f43f5e;
+    --brand-purple: #a855f7;
+    --brand-indigo: #6366f1;
+
+    /* Light Theme (Dashboard Standard) */
+    --header-bg: #ffffff;
+    --hero-bg: #edf3ed;
+    --page-bg: #ffffff;
+    --section-bg: #f9fbf9;
+    --surface-card: #ffffff;
+    --surface-card-subtle: #f8faf8;
+    --card-border: rgba(44, 79, 36, 0.12);
+    --card-border-hover: rgba(44, 79, 36, 0.28);
+    --card-shadow: 0 10px 30px rgba(18, 42, 16, 0.06);
+
+    /* Text */
+    --text-primary: #152713;
+    --text-secondary: #284422;
+    --text-muted: #5e775a;
+    --text-light-sub: #789274;
+
+    /* Form Inputs */
+    --input-bg: #ffffff;
+    --input-border: #d4e0d2;
+    --input-focus-border: #22c55e;
+    --input-focus-ring: rgba(34, 197, 94, 0.2);
+
+    /* Radii */
+    --radius-pill: 9999px;
+    --radius-xs: 6px;
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
+
+    /* Shadows */
+    --shadow-subtle: 0 4px 16px rgba(18, 42, 16, 0.05);
+    --shadow-card: 0 12px 36px rgba(18, 42, 16, 0.08);
+    --shadow-elevated: 0 20px 48px rgba(18, 42, 16, 0.14);
+}
+
+/* Dark Theme Overrides */
+.farmer-harvest-root.dark-theme,
+body.dark-theme {
+    --header-bg: #141b15;
+    --hero-bg: #0e1610;
+    --page-bg: #090e0a;
+    --section-bg: #0d140e;
+    --surface-card: #131c15;
+    --surface-card-subtle: #18231a;
+    --card-border: rgba(74, 222, 128, 0.16);
+    --card-border-hover: rgba(74, 222, 128, 0.35);
+    --card-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+
+    --text-primary: #f0f7f1;
+    --text-secondary: #c2dec6;
+    --text-muted: #8aa68f;
+    --text-light-sub: #637f68;
+
+    --input-bg: #101711;
+    --input-border: #223725;
+    --input-focus-border: #4ade80;
+    --input-focus-ring: rgba(74, 222, 128, 0.25);
+}
+
+/* ROOT CONTAINER */
+.farmer-harvest-root {
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--page-bg);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+    padding-bottom: 90px;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* ============================================================================
+   1. WRINKLED TORN-PAPER HEADER (Identical to CollectionCenter.css)
+   ============================================================================ */
+.header-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 110px;
+    z-index: 99;
+}
+
+.header-bg-svg-wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 110px;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.header-bg-svg-wrap svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.farmer-harvest-root.dark-theme .header-bg-svg-wrap path {
+    fill: #141b15 !important;
+}
+
+.top-nav {
+    position: relative;
+    z-index: 2;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 14px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Brand Logo */
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.logo-sprout-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 4px 8px rgba(34, 197, 94, 0.25));
+    transition: transform 0.2s ease;
+}
+
+.brand-logo:hover .logo-sprout-icon {
+    transform: rotate(-6deg) scale(1.05);
+}
+
+.logo-sprout-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.logo-text {
+    font-family: 'Noto Sans Sinhala', 'Abhaya Libre', 'Plus Jakarta Sans', serif;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #1b4d1b;
+}
+
+.farmer-harvest-root.dark-theme .logo-text {
+    color: #4ade80;
+}
+
+.logo-text span {
+    color: #2e7d32;
+    font-weight: 700;
+}
+
+.farmer-harvest-root.dark-theme .logo-text span {
+    color: #86efac;
+}
+
+.module-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    background: rgba(34, 197, 94, 0.14);
+    border: 1px solid rgba(34, 197, 94, 0.35);
+    color: var(--brand-leaf-bright);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 6px;
+}
+
+.farmer-harvest-root.dark-theme .module-tag {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: rgba(74, 222, 128, 0.4);
+    color: #4ade80;
+}
+
+/* Right Nav Controls */
+.nav-right-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.theme-toggle-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--card-border);
+    background: var(--surface-card);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-subtle);
+    transition: all 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+    transform: rotate(18deg) scale(1.05);
+    border-color: var(--brand-leaf-bright);
+    color: var(--brand-leaf-bright);
+}
+
+/* User Profile Menu */
+.user-profile-menu {
+    position: relative;
+}
+
+.user-profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px 6px 8px;
+    background: var(--surface-card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    box-shadow: var(--shadow-subtle);
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+}
+
+.user-profile-btn:hover {
+    border-color: var(--brand-leaf);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+}
+
+.user-avatar-circle {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-leaf), #15803d);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-status-dot {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #22c55e;
+    border: 2px solid var(--surface-card);
+}
+
+.user-profile-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 250px;
+    background: var(--surface-card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-elevated);
+    padding: 8px;
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.profile-dropdown.show {
+    display: flex;
+    animation: fadeInDropdown 0.2s ease-out;
+}
+
+@keyframes fadeInDropdown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-header {
+    padding: 8px 10px 10px;
+    border-bottom: 1px solid var(--card-border);
+    margin-bottom: 6px;
+}
+
+.dropdown-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.dropdown-subtitle {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--brand-leaf-bright);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.dropdown-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-xs);
+    transition: all 0.15s ease;
+}
+
+.dropdown-link:hover {
+    background: var(--surface-card-subtle);
+    color: var(--brand-leaf-bright);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: var(--card-border);
+    margin: 6px 0;
+}
+
+/* ============================================================================
+   2. PAGE HERO / SUBHEADER SECTION (Matches CollectionCenter.css)
+   ============================================================================ */
+.page-hero-banner {
+    position: relative;
+    width: 100%;
+    background-color: var(--hero-bg);
+    background: radial-gradient(circle at 15% 30%, rgba(185, 230, 185, 0.35) 0%, transparent 60%),
+        radial-gradient(circle at 85% 70%, rgba(200, 235, 255, 0.3) 0%, transparent 60%),
+        var(--hero-bg);
+    border-bottom: 1px solid var(--card-border);
+    padding: 24px 28px 28px;
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.page-hero-banner .hero-doodle-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.12;
+    background-image: radial-gradient(#2d6124 1.2px, transparent 1.2px);
+    background-size: 32px 32px;
+}
+
+.farmer-harvest-root.dark-theme .page-hero-banner .hero-doodle-bg {
+    opacity: 0.06;
+}
+
+.hero-flex-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.breadcrumb-trail {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.breadcrumb-trail a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.breadcrumb-trail a:hover {
+    color: var(--brand-leaf-bright);
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.6px;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.page-title span {
+    color: var(--brand-leaf-bright);
+}
+
+.farmer-harvest-root.dark-theme .page-title span {
+    color: #4ade80;
+}
+
+.page-subtitle {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    max-width: 680px;
+    margin-top: 6px;
+    line-height: 1.5;
+}
+
+.hero-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.hero-pill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-card);
+    border: 1px solid var(--card-border);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-decoration: none;
+    box-shadow: var(--shadow-subtle);
+    transition: all 0.2s ease;
+}
+
+.hero-pill-btn:hover {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: var(--brand-leaf-bright);
+    color: var(--brand-leaf-bright);
+    transform: translateY(-1px);
+}
+
+/* ============================================================================
+   3. TOP KPI METRICS SECTION (Exact CollectionCenter.css structure)
+   ============================================================================ */
+.kpi-section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 28px 24px;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.kpi-card {
+    background: var(--surface-card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-subtle);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+    border-color: var(--card-border-hover);
+}
+
+.kpi-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.kpi-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+}
+
+.kpi-icon-badge {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ping-dot {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #22c55e;
+}
+
+.ping-dot::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: rgba(34, 197, 94, 0.45);
+    animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+    75%, 100% {
+        transform: scale(2.2);
+        opacity: 0;
+    }
+}
+
+.kpi-value {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--text-primary);
+    line-height: 1.1;
+}
+
+.kpi-subtext {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+/* ============================================================================
+   4. TWO-COLUMN MAIN WORKSPACE GRID (Matches CollectionCenter.css 7fr 5fr)
+   ============================================================================ */
+.workspace-section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 28px;
+}
+
+.workspace-grid {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    gap: 24px;
+    align-items: start;
+}
+
+/* ============================================================================
+   5. LEFT COLUMN: SCANNER / CAMERA CARD & REGISTRATION FORM
+   ============================================================================ */
+.left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Camera Card styled identically to Map Card in CollectionCenter */
+.camera-card {
+    background: var(--surface-card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+}
+
+.camera-toolbar {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--card-border);
+    background: var(--surface-card-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.camera-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.camera-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.camera-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 11.5px;
+    font-weight: 700;
+    border: 1px solid var(--card-border);
+    background: var(--surface-card);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.camera-action-btn:hover {
+    border-color: var(--brand-leaf-bright);
+    color: var(--brand-leaf-bright);
+    background: rgba(34, 197, 94, 0.08);
+}
+
+.camera-action-btn.verify-btn {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.35);
+    color: var(--brand-leaf-bright);
+}
+
+.camera-action-btn.verify-btn.live {
+    background: rgba(244, 63, 94, 0.12);
+    border-color: rgba(244, 63, 94, 0.35);
+    color: var(--brand-rose);
+}
+
+/* Video Frame Viewport */
+.camera-frame-wrapper {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    background-color: #031008;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.camera-video-element {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.camera-overlay-reticle {
+    position: absolute;
+    inset: 16px;
+    border: 2px dashed rgba(74, 222, 128, 0.55);
+    border-radius: var(--radius-md);
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 12px;
+    z-index: 5;
+}
+
+.reticle-badge-top {
+    align-self: flex-start;
+    background: rgba(14, 22, 16, 0.88);
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    color: #4ade80;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    backdrop-filter: blur(8px);
+}
+
+.reticle-badge-bottom {
+    align-self: flex-end;
+    background: rgba(14, 22, 16, 0.88);
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    color: #4ade80;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 10.5px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    backdrop-filter: blur(8px);
+}
+
+.camera-standby-placeholder {
+    padding: 32px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 360px;
+}
+
+.camera-standby-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    background: rgba(74, 222, 128, 0.12);
+    color: #4ade80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.camera-standby-placeholder.has-error .camera-standby-icon {
+    background: rgba(244, 63, 94, 0.15);
+    color: var(--brand-rose);
+}
+
+.camera-standby-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+
+.camera-standby-desc {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.45;
+}
+
+/* Coordinates / Status HUD Badge (Identical to CollectionCenter.css) */
+.coordinates-hud {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: rgba(14, 22, 16, 0.88);
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    border-radius: var(--radius-md);
+    padding: 8px 14px;
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: 10;
+    pointer-events: none;
+}
+
+.hud-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: #94a3b8;
+}
+
+.hud-val {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-weight: 700;
+    color: #4ade80;
+}
+
+/* ============================================================================
+   6. REGISTRATION FORM CARD (Matches CollectionCenter.css)
+   ============================================================================ */
+.center-form-card {
+    background: var(--surface-card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
+    padding: 22px 24px;
+    box-shadow: var(--shadow-card);
+}
+
+.form-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+    border-bottom: 1px dashed var(--card-border);
+}
+
+.form-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.editing-mode-pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--brand-leaf-bright);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.form-field-group {
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.form-label-tag {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    height: 42px;
+    padding: 0 14px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 13.5px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.form-input:focus,
+.form-select:focus {
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 0 3px var(--input-focus-ring);
+}
+
+.form-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+/* Stepper Input */
+.stepper-wrap {
+    display: flex;
+    align-items: center;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius-sm);
+    height: 42px;
+    padding: 2px;
+    transition: all 0.2s ease;
+}
+
+.stepper-wrap:focus-within {
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 0 3px var(--input-focus-ring);
+}
+
+.stepper-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: var(--radius-xs);
+    transition: all 0.15s ease;
+}
+
+.stepper-btn:hover:not(:disabled) {
+    background: var(--surface-card-subtle);
+    color: var(--brand-leaf-bright);
+}
+
+.stepper-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.stepper-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    outline: none;
+}
+
+.stepper-unit {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding-right: 12px;
+    user-select: none;
+}
+
+/* Autocomplete produce dropdown on form */
+.floating-results-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    max-height: 220px;
+    overflow-y: auto;
+    border-radius: var(--radius-md);
+    background: var(--surface-card);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow-elevated);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+}
+
+.search-result-row {
+    width: 100%;
+    text-align: left;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--card-border);
+    transition: background 0.15s ease;
+}
+
+.search-result-row:last-child {
+    border-bottom: none;
+}
+
+.search-result-row:hover,
+.search-result-row.active {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--brand-leaf-bright);
+}
+
+.search-result-badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: var(--radius-pill);
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--brand-leaf-bright);
+}
+
+/* Form Footer Actions (Matches CollectionCenter.css) */
+.form-footer-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 16px;
+    margin-top: 16px;
+    border-top: 1px dashed var(--card-border);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.form-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cancel-edit-btn {
+    padding: 9px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--card-border);
+    background: var(--surface-card);
+    color: var(--text-muted);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.cancel-edit-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--card-border-hover);
+}
+
+.submit-center-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: linear-gradient(135deg, var(--brand-leaf), var(--brand-leaf-bright));
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(34, 197, 94, 0.35);
+    transition: all 0.2s ease;
+}
+
+.submit-center-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.45);
+}
+
+.submit-center-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* ============================================================================
+   7. RIGHT COLUMN: HARVEST MANIFEST ROSTER (Matches CollectionCenter.css)
+   ============================================================================ */
+.right-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.roster-card {
+    background: var(--surface-card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.roster-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--card-border);
+    background: var(--surface-card-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.roster-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.roster-icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    background: rgba(34, 197, 94, 0.14);
+    color: var(--brand-leaf-bright);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.roster-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.roster-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.roster-online-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: var(--brand-leaf-bright);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.roster-online-pill.committed {
+    background: rgba(168, 85, 247, 0.12);
+    border-color: rgba(168, 85, 247, 0.3);
+    color: var(--brand-purple);
+}
+
+/* Roster Filter Search */
+.roster-search-bar {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.roster-filter-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: 12.5px;
+    color: var(--text-primary);
+    outline: none;
+}
+
+.roster-list-scroll {
+    max-height: 480px;
+    overflow-y: auto;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Item Card (Matches center-item-card in CollectionCenter.css) */
+.center-item-card {
+    background: var(--surface-card-subtle);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    transition: all 0.2s ease;
+}
+
+.center-item-card:hover {
+    border-color: var(--card-border-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-subtle);
+}
+
+.center-item-card.is-editing {
+    border-color: var(--brand-leaf-bright);
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+.center-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.center-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.center-id-badge {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.center-status-badge {
+    font-size: 10.5px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.center-status-badge.active {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.center-status-badge.inactive {
+    background: rgba(244, 63, 94, 0.12);
+    color: var(--brand-rose);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.center-address-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--brand-leaf-bright);
+    margin-bottom: 4px;
+}
+
+.center-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--text-muted);
+}
+
+.district-pill {
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.center-coords-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    margin-top: 4px;
+}
+
+.center-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.item-action-icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--card-border);
+    background: var(--surface-card);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.item-action-icon-btn:hover {
+    border-color: var(--brand-leaf-bright);
+    color: var(--brand-leaf-bright);
+}
+
+.item-action-icon-btn.delete-btn:hover {
+    border-color: var(--brand-rose);
+    color: var(--brand-rose);
+    background: rgba(244, 63, 94, 0.08);
+}
+
+/* Roster Footer with Broadcast & Reset buttons */
+.roster-footer {
+    padding: 14px 18px;
+    border-top: 1px solid var(--card-border);
+    background: var(--surface-card-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.roster-footer-stats {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.roster-footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-broadcast-manifest {
+    flex: 1;
+    height: 42px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: linear-gradient(135deg, var(--brand-leaf), var(--brand-leaf-bright));
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(34, 197, 94, 0.35);
+    transition: all 0.2s ease;
+}
+
+.btn-broadcast-manifest:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.45);
+}
+
+.btn-broadcast-manifest:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn-broadcast-manifest.committed {
+    background: rgba(34, 197, 94, 0.2);
+    color: var(--brand-leaf-bright);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+    cursor: default;
+}
+
+.btn-reset-manifest {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-sm);
+    border: 1px dashed var(--card-border);
+    background: var(--surface-card);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-reset-manifest:hover {
+    border-color: var(--brand-rose);
+    color: var(--brand-rose);
+}
+
+/* ============================================================================
+   8. FLOATING BOTTOM NAVIGATION PILL (Exact CollectionCenter.css structure)
+   ============================================================================ */
+.floating-bottom-nav {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 40;
+    pointer-events: none;
+    padding: 0 16px;
+}
+
+.floating-nav-pill {
+    pointer-events: auto;
+    background: var(--surface-card);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow-elevated);
+    border-radius: var(--radius-pill);
+    padding: 5px 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    backdrop-filter: blur(12px);
+}
+
+.nav-pill-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.nav-pill-item:hover {
+    color: var(--brand-leaf-bright);
+    background: var(--surface-card-subtle);
+}
+
+.nav-pill-item.active {
+    background: var(--brand-leaf-bright);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+}
+
+/* ============================================================================
+   9. TOAST ALERT POPUP (Exact CollectionCenter.css structure)
+   ============================================================================ */
+.toast-notice {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 18px;
+    border-radius: var(--radius-pill);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #ffffff;
+    box-shadow: var(--shadow-elevated);
+    animation: toastSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes toastSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-14px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.toast-notice.success {
+    background: #16a34a;
+}
+
+.toast-notice.error {
+    background: #e11d48;
+}
+
+.toast-notice.info {
+    background: #0284c7;
+}
+
+/* ============================================================================
+   10. DARK FOOTER (Exact CollectionCenter.css structure)
+   ============================================================================ */
+.footer-wrapper {
+    margin-top: 48px;
+    background: #090e0a;
+    border-top: 1px solid rgba(74, 222, 128, 0.12);
+    padding: 40px 28px 24px;
+    color: #94a3b8;
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 32px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid rgba(74, 222, 128, 0.08);
+}
+
+.footer-brand {
+    max-width: 440px;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.footer-logo-text {
+    font-family: 'Noto Sans Sinhala', 'Abhaya Libre', serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: #4ade80;
+}
+
+.footer-logo-text span {
+    color: #86efac;
+}
+
+.footer-tagline {
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #64748b;
+}
+
+.footer-links-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+    max-width: 600px;
+}
+
+.footer-link-item {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.footer-link-item:hover {
+    color: #4ade80;
+}
+
+.footer-bottom {
+    max-width: 1400px;
+    margin: 20px auto 0;
+    text-align: center;
+    font-size: 11.5px;
+    color: #475569;
+}
+
+/* ============================================================================
+   11. RESPONSIVE BREAKPOINTS (Matches CollectionCenter.css)
+   ============================================================================ */
+@media (max-width: 1024px) {
+    .workspace-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .top-nav {
+        padding: 12px 16px;
+    }
+
+    .page-hero-banner,
+    .kpi-section,
+    .workspace-section {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-two-col {
+        grid-template-columns: 1fr;
+    }
+
+    .nav-pill-item span {
+        display: none;
+    }
+
+    .nav-pill-item {
+        padding: 8px 12px;
+    }
+}
+
+
+/* ============================================================================
+   8. FLOATING PILL NAVIGATION DOCK (FARMER PORTAL)
+   ============================================================================ */
+.farmer-harvest-root .rp-floating-dock {
+  position: fixed !important;
+  top: auto !important;
+  bottom: 18px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 950 !important;
+  width: max-content;
+  max-width: min(920px, calc(100vw - 28px));
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: none;
+}
+
+.farmer-harvest-root .rp-floating-pill {
+  pointer-events: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 5px 6px;
+  padding: 8px 14px;
+  border-radius: 26px;
+  background: rgba(235, 244, 236, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: none !important;
+  outline: none !important;
+  box-shadow:
+    0 14px 36px rgba(18, 42, 16, 0.18),
+    0 4px 12px rgba(22, 101, 52, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.farmer-harvest-root.dark-theme .rp-floating-pill,
+body.dark-theme .farmer-harvest-root .rp-floating-pill {
+  background: rgba(26, 40, 29, 0.92);
+  border: none !important;
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.78),
+    0 4px 14px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(74, 222, 128, 0.14);
+}
+
+.farmer-harvest-root .rp-floating-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  color: #2f4e27;
+  text-decoration: none;
+  white-space: nowrap;
+  border: none !important;
+  transition: all 0.2s ease;
+}
+
+.farmer-harvest-root.dark-theme .rp-floating-item,
+body.dark-theme .farmer-harvest-root .rp-floating-item {
+  color: #b7d7bc;
+}
+
+.farmer-harvest-root .rp-floating-item:hover {
+  color: #143412;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.farmer-harvest-root.dark-theme .rp-floating-item:hover,
+body.dark-theme .farmer-harvest-root .rp-floating-item:hover {
+  color: #ffffff;
+  background: rgba(74, 222, 128, 0.16);
+}
+
+.farmer-harvest-root .rp-floating-item.active {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+}
