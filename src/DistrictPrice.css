@@ -1,0 +1,1159 @@
+:root {
+  /* Brand Colors */
+  --brand-dark-green: #2c4f24;
+  --brand-dark-green-hover: #223f1c;
+  --brand-olive: #365e2b;
+  --brand-leaf: #38b449;
+  --brand-leaf-bright: #22c55e;
+  --brand-emerald: #10b981;
+  --brand-teal: #14b8a6;
+  --brand-cyan: #38bdf8;
+  --brand-amber: #f59e0b;
+  --brand-rose: #f43f5e;
+  --brand-purple: #a855f7;
+
+  /* Light Theme — Crystal Clear & High Contrast */
+  --header-bg: #ffffff;
+  --hero-bg: #edf3ed;
+  --page-bg: #ffffff;
+  --section-bg: #f8faf8;
+  --surface-card: #ffffff;
+  --surface-card-subtle: #f8faf8;
+  --card-border: rgba(44, 79, 36, 0.14);
+  --card-border-hover: rgba(44, 79, 36, 0.32);
+  --card-shadow: 0 10px 30px rgba(18, 42, 16, 0.06);
+
+  /* Stat Cards Light Mode */
+  --stat-card-bg: linear-gradient(135deg, #ebf2fe 0%, #e2ecfd 100%);
+  --stat-card-border: rgba(180, 205, 250, 0.7);
+  --stat-card-text-title: #334155;
+  --stat-card-text-value: #0f172a;
+  --stat-val-district: #0f172a;
+  --stat-val-volume: #0284c7;
+  --stat-val-lots: #d97706;
+  --stat-val-completion: #15803d;
+
+  /* Typography Light Mode */
+  --text-primary: #0f172a;
+  --text-secondary: #1e293b;
+  --text-muted: #475569;
+  --text-light-sub: #64748b;
+
+  /* Form Inputs Light Mode */
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+  --input-focus-border: #22c55e;
+  --input-focus-ring: rgba(34, 197, 94, 0.2);
+
+  /* Margins & Badges Light Mode */
+  --margin-pos-bg: #dcfce7;
+  --margin-pos-text: #15803d;
+  --margin-pos-border: #86efac;
+  --margin-neg-bg: #fee2e2;
+  --margin-neg-text: #b91c1c;
+  --margin-neg-border: #fca5a5;
+
+  /* Alert / Notice Light Mode */
+  --notice-bg: #fffbeb;
+  --notice-text: #b45309;
+  --notice-border: #fcd34d;
+
+  /* Radii & Shadows */
+  --radius-pill: 9999px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --shadow-subtle: 0 4px 18px rgba(18, 42, 16, 0.05);
+  --shadow-card: 0 12px 36px rgba(18, 42, 16, 0.08);
+}
+
+/* Dark Theme Overrides */
+.district-price-root.dark-theme,
+body.dark-theme .district-price-root {
+  --header-bg: #141b15;
+  --hero-bg: #0e1610;
+  --page-bg: #090e0a;
+  --section-bg: #0d140e;
+  --surface-card: #131c15;
+  --surface-card-subtle: #18231a;
+  --card-border: rgba(74, 222, 128, 0.16);
+  --card-border-hover: rgba(74, 222, 128, 0.35);
+
+  --stat-card-bg: linear-gradient(135deg, #16241b 0%, #111e15 100%);
+  --stat-card-border: rgba(74, 222, 128, 0.2);
+  --stat-card-text-title: #8bb394;
+  --stat-card-text-value: #ecfaee;
+  --stat-val-district: #f8fafc;
+  --stat-val-volume: #38bdf8;
+  --stat-val-lots: #fbbf24;
+  --stat-val-completion: #4ade80;
+
+  --text-primary: #f0f7f1;
+  --text-secondary: #c2dec6;
+  --text-muted: #8aa68f;
+  --text-light-sub: #637f68;
+
+  --input-bg: #131d14;
+  --input-border: #243826;
+  --input-focus-border: #4ade80;
+  --input-focus-ring: rgba(74, 222, 128, 0.25);
+
+  --margin-pos-bg: rgba(34, 197, 94, 0.15);
+  --margin-pos-text: #4ade80;
+  --margin-pos-border: rgba(74, 222, 128, 0.35);
+  --margin-neg-bg: rgba(239, 68, 68, 0.15);
+  --margin-neg-text: #f87171;
+  --margin-neg-border: rgba(239, 68, 68, 0.35);
+
+  --notice-bg: rgba(245, 158, 11, 0.12);
+  --notice-text: #fcd34d;
+  --notice-border: rgba(245, 158, 11, 0.25);
+
+  --shadow-card: 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+.district-price-root {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--page-bg);
+  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================================================
+   1. WHITE WRINKLED TORN-PAPER HEADER
+   ============================================================================ */
+.district-price-root .header-wrapper {
+  position: relative;
+  width: 100%;
+  height: 94px;
+  background: transparent;
+  z-index: 30;
+}
+
+@media (min-width: 768px) {
+  .district-price-root .header-wrapper {
+    height: 104px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .district-price-root .header-wrapper {
+    height: 112px;
+  }
+}
+
+.district-price-root .header-bg-svg-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.district-price-root .header-bg-svg-wrap svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.district-price-root .header-bg-svg-wrap svg path {
+  fill: var(--header-bg);
+  transition: fill 0.3s ease;
+}
+
+.district-price-root .top-nav {
+  position: relative;
+  z-index: 5;
+  max-width: 1400px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (min-width: 1024px) {
+  .district-price-root .top-nav {
+    padding: 0 36px;
+  }
+}
+
+.district-price-root .brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  user-select: none;
+  transition: transform 0.2s ease;
+}
+
+.district-price-root .brand-logo:hover {
+  transform: translateY(-1px);
+}
+
+.district-price-root .brand-logo-img {
+  height: 42px;
+  width: auto;
+  max-width: 70px;
+  object-fit: contain;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 2px 6px rgba(34, 197, 94, 0.25));
+  display: block;
+  flex-shrink: 0;
+}
+
+.district-price-root .logo-text {
+  font-family: 'Noto Sans Sinhala', 'Abhaya Libre', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--brand-dark-green);
+  letter-spacing: -0.3px;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  line-height: 1;
+}
+
+.district-price-root .logo-text span {
+  color: var(--brand-leaf);
+}
+
+.district-price-root.dark-theme .logo-text,
+body.dark-theme .district-price-root .logo-text {
+  color: #f0f7f1;
+}
+
+.district-price-root.dark-theme .logo-text span,
+body.dark-theme .district-price-root .logo-text span {
+  color: #4ade80;
+}
+
+.district-price-root .module-tag {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(34, 197, 94, 0.14);
+  color: #16a34a;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  margin-left: 6px;
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .district-price-root .module-tag {
+    display: inline-block;
+  }
+}
+
+.district-price-root.dark-theme .module-tag,
+body.dark-theme .district-price-root .module-tag {
+  background: rgba(74, 222, 128, 0.16);
+  color: #4ade80;
+}
+
+.district-price-root .nav-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.district-price-root .theme-toggle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(44, 79, 36, 0.08);
+  border: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: all 0.25s ease;
+}
+
+.district-price-root .theme-toggle-btn:hover {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--brand-leaf);
+  transform: rotate(15deg) scale(1.05);
+}
+
+.district-price-root.dark-theme .theme-toggle-btn,
+body.dark-theme .district-price-root .theme-toggle-btn {
+  background: rgba(74, 222, 128, 0.1);
+  border-color: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+}
+
+.district-price-root .nav-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--surface-card);
+  border: 1px solid var(--card-border);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.district-price-root .nav-back-link:hover {
+  border-color: var(--brand-leaf-bright);
+  color: var(--brand-leaf);
+  transform: translateX(-2px);
+}
+
+/* ============================================================================
+   2. PAGE HERO BANNER (100% Full Width, Edge-to-Edge Overlap)
+   ============================================================================ */
+.district-price-root .page-hero-banner {
+  position: relative;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  background-color: var(--hero-bg);
+  background: radial-gradient(circle at 15% 30%, rgba(185, 230, 185, 0.35) 0%, transparent 60%),
+    radial-gradient(circle at 85% 70%, rgba(200, 235, 255, 0.3) 0%, transparent 60%),
+    var(--hero-bg);
+  margin-top: -112px;
+  padding: 128px 36px 36px;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .district-price-root .page-hero-banner {
+    margin-top: -94px;
+    padding-top: 108px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.district-price-root .hero-doodle-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.12;
+  background-image: radial-gradient(#2d6124 1.2px, transparent 1.2px);
+  background-size: 32px 32px;
+}
+
+.district-price-root.dark-theme .hero-doodle-bg,
+body.dark-theme .district-price-root .hero-doodle-bg {
+  opacity: 0.06;
+}
+
+.district-price-root .hero-content-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.district-price-root .hero-page-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: -0.5px;
+}
+
+.district-price-root .hero-page-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 760px;
+  line-height: 1.6;
+}
+
+/* ============================================================================
+   3. MAIN CONTENT CONTAINER
+   ============================================================================ */
+.district-price-container {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 24px 60px;
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.district-price-root .surface-card {
+  background: var(--surface-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.district-price-root .surface-card:hover {
+  border-color: var(--card-border-hover);
+}
+
+/* ============================================================================
+   4. PARAMETER FILTER CARD (CLEAR CONTRAST IN BOTH LIGHT & DARK)
+   ============================================================================ */
+.district-price-root .parameter-filter-card {
+  padding: 20px 24px;
+}
+
+.district-price-root .filter-header-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 14px;
+  border-bottom: 1px dashed var(--card-border);
+  margin-bottom: 18px;
+}
+
+.district-price-root .filter-header-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.district-price-root .filter-grid-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  align-items: end;
+}
+
+@media (min-width: 640px) {
+  .district-price-root .filter-grid-row {
+    grid-template-columns: 1.2fr 1.5fr 1fr;
+  }
+}
+
+.district-price-root .filter-field-col label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.district-price-root .filter-field-input,
+.district-price-root .filter-field-select {
+  width: 100%;
+  height: 42px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.district-price-root .filter-field-input:focus,
+.district-price-root .filter-field-select:focus {
+  border-color: var(--input-focus-border);
+  box-shadow: 0 0 0 3px var(--input-focus-ring);
+}
+
+.district-price-root .filter-indicator-box {
+  background: var(--surface-card-subtle);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 42px;
+}
+
+.district-price-root .filter-indicator-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.district-price-root .filter-indicator-value {
+  font-size: 15px;
+  font-weight: 800;
+  font-family: monospace;
+  color: var(--brand-leaf-bright);
+}
+
+.district-price-root:not(.dark-theme) .filter-indicator-value {
+  color: #16a34a;
+}
+
+/* ============================================================================
+   5. AGGREGATE KPI SUMMARY CARDS (HIGH-CONTRAST IN LIGHT & DARK)
+   ============================================================================ */
+.district-price-root .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .district-price-root .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .district-price-root .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
+.district-price-root .stat-card {
+  background: var(--stat-card-bg);
+  border: 1px solid var(--stat-card-border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  box-shadow: 0 4px 18px rgba(18, 42, 16, 0.05);
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.district-price-root .stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card);
+}
+
+.district-price-root .stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.district-price-root .stat-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--stat-card-text-title);
+}
+
+.district-price-root .stat-trend {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+}
+
+.district-price-root.dark-theme .stat-trend,
+body.dark-theme .district-price-root .stat-trend {
+  background: rgba(74, 222, 128, 0.18);
+  color: #4ade80;
+}
+
+.district-price-root .stat-value {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.1;
+  font-family: monospace;
+  letter-spacing: -0.5px;
+  margin-top: 4px;
+}
+
+.district-price-root .stat-value.district-val {
+  color: var(--stat-val-district);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 22px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.district-price-root .stat-value.volume-val {
+  color: var(--stat-val-volume);
+}
+
+.district-price-root .stat-value.lots-val {
+  color: var(--stat-val-lots);
+}
+
+.district-price-root .stat-value.completion-val {
+  color: var(--stat-val-completion);
+}
+
+.district-price-root .stat-unit {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+/* ============================================================================
+   6. WHOLESALE TARIFF ASSIGNMENT TABLE CARD
+   ============================================================================ */
+.district-price-root .table-ledger-card {
+  overflow: hidden;
+}
+
+.district-price-root .table-card-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--surface-card-subtle);
+}
+
+.district-price-root .table-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.district-price-root .table-card-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.district-price-root .table-header-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.district-price-root .batch-active-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(34, 197, 94, 0.14);
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.district-price-root.dark-theme .batch-active-badge,
+body.dark-theme .district-price-root .batch-active-badge {
+  background: rgba(74, 222, 128, 0.16);
+  color: #4ade80;
+  border-color: rgba(74, 222, 128, 0.35);
+}
+
+.district-price-root .table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.district-price-root .tariff-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.district-price-root .tariff-table thead {
+  background: var(--surface-card-subtle);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.district-price-root .tariff-table th {
+  padding: 14px 18px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.district-price-root .tariff-table tbody tr {
+  border-bottom: 1px solid var(--card-border);
+  transition: background-color 0.2s ease;
+}
+
+.district-price-root .tariff-table tbody tr:hover {
+  background-color: rgba(34, 197, 94, 0.05);
+}
+
+.district-price-root.dark-theme .tariff-table tbody tr:hover,
+body.dark-theme .district-price-root .tariff-table tbody tr:hover {
+  background-color: rgba(74, 222, 128, 0.04);
+}
+
+.district-price-root .tariff-table td {
+  padding: 14px 18px;
+  vertical-align: middle;
+  color: var(--text-primary);
+}
+
+.district-price-root .crop-title {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 13.5px;
+}
+
+.district-price-root .crop-lot-subtext {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.district-price-root .crop-category-badge {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.district-price-root .crop-volume-text {
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+/* Price Input Wrappers */
+.district-price-root .price-input-box {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 140px;
+}
+
+.district-price-root .currency-prefix {
+  position: absolute;
+  left: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.district-price-root .tariff-number-input {
+  width: 100%;
+  height: 38px;
+  padding: 0 10px 0 34px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: monospace;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.district-price-root .tariff-number-input:focus {
+  border-color: var(--input-focus-border);
+  box-shadow: 0 0 0 3px var(--input-focus-ring);
+}
+
+.district-price-root .tariff-number-input.selling {
+  color: #15803d;
+}
+
+.district-price-root.dark-theme .tariff-number-input.selling,
+body.dark-theme .district-price-root .tariff-number-input.selling {
+  color: #4ade80;
+}
+
+/* Unit Margin Badges */
+.district-price-root .margin-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 800;
+  font-family: monospace;
+}
+
+.district-price-root .margin-badge.positive {
+  background: var(--margin-pos-bg);
+  color: var(--margin-pos-text);
+  border: 1px solid var(--margin-pos-border);
+}
+
+.district-price-root .margin-badge.negative {
+  background: var(--margin-neg-bg);
+  color: var(--margin-neg-text);
+  border: 1px solid var(--margin-neg-border);
+}
+
+/* Action Footer Bar */
+.district-price-root .table-action-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--surface-card-subtle);
+}
+
+@media (min-width: 640px) {
+  .district-price-root .table-action-footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.district-price-root .tariff-alert-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--notice-text);
+  background: var(--notice-bg);
+  border: 1px solid var(--notice-border);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  max-width: 720px;
+}
+
+.district-price-root .btn-release-prices {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 24px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.35);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.district-price-root .btn-release-prices:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(34, 197, 94, 0.45);
+}
+
+.district-price-root .btn-release-prices:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Empty / Loading State */
+.district-price-root .table-empty-box {
+  padding: 56px 20px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.district-price-root .empty-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(44, 79, 36, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.district-price-root.dark-theme .empty-icon-wrap,
+body.dark-theme .district-price-root .empty-icon-wrap {
+  background: rgba(74, 222, 128, 0.1);
+  color: #8aa68f;
+}
+
+/* ============================================================================
+   7. DARK FOOTER (EXACT MATCH TO MANAGER DASHBOARD & STORE ORDERS)
+   ============================================================================ */
+.district-price-root .footer-wrapper {
+  background: #101811;
+  color: #b7ceb9;
+  padding: 60px 36px 30px;
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.district-price-root .footer-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+@media (min-width: 900px) {
+  .district-price-root .footer-content {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+}
+
+.district-price-root .footer-brand {
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.district-price-root .footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  margin-bottom: 8px;
+  white-space: nowrap;
+}
+
+.district-price-root .footer-logo-img {
+  height: 48px;
+  width: auto;
+  max-width: 80px;
+  object-fit: contain;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 2px 8px rgba(34, 197, 94, 0.3));
+  display: block;
+  flex-shrink: 0;
+}
+
+.district-price-root .footer-logo-text {
+  font-family: 'Noto Sans Sinhala', 'Abhaya Libre', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: #22c55e;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.district-price-root .footer-logo-text span {
+  color: #22c55e;
+}
+
+.district-price-root .footer-tagline {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #ffffff;
+  white-space: nowrap;
+  margin: 4px 0 0 0;
+  letter-spacing: 0.25px;
+  opacity: 0.95;
+}
+
+.district-price-root .footer-links-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 24px;
+  max-width: 600px;
+}
+
+.district-price-root .footer-link-item {
+  font-size: 13px;
+  font-weight: 600;
+  color: #b7ceb9;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.district-price-root .footer-link-item:hover {
+  color: #4ade80;
+}
+
+.district-price-root .footer-bottom {
+  max-width: 1400px;
+  margin: 36px auto 0;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #5d7560;
+}
+
+/* Toast Alert */
+.district-price-root .action-toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: var(--surface-card);
+  color: var(--text-primary);
+  border: 1px solid var(--card-border);
+  border-left: 4px solid var(--brand-leaf-bright);
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.district-price-root .action-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.district-price-root .action-toast.error {
+  border-left-color: #ef4444;
+}
+
+
+
+/* ============================================================================
+   8. FLOATING PILL NAVIGATION DOCK (BOTTOM, BORDERLESS, ALL 14 VISIBLE)
+   ============================================================================ */
+.district-price-root .rp-floating-dock {
+  position: fixed !important;
+  top: auto !important;
+  bottom: 18px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 950 !important;
+  width: max-content;
+  max-width: min(1140px, calc(100vw - 28px));
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: none;
+}
+
+.district-price-root .rp-floating-pill {
+  pointer-events: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 5px 6px;
+  padding: 8px 14px;
+  border-radius: 26px;
+  background: rgba(235, 244, 236, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: none !important;
+  outline: none !important;
+  box-shadow:
+    0 14px 36px rgba(18, 42, 16, 0.18),
+    0 4px 12px rgba(22, 101, 52, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.district-price-root.dark-theme .rp-floating-pill,
+body.dark-theme .district-price-root .rp-floating-pill {
+  background: rgba(26, 40, 29, 0.92);
+  border: none !important;
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.78),
+    0 4px 14px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(74, 222, 128, 0.14);
+}
+
+.district-price-root .rp-floating-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  color: #2f4e27;
+  text-decoration: none;
+  white-space: nowrap;
+  border: none !important;
+  transition: all 0.2s ease;
+}
+
+.district-price-root.dark-theme .rp-floating-item,
+body.dark-theme .district-price-root .rp-floating-item {
+  color: #b7d7bc;
+}
+
+.district-price-root .rp-floating-item:hover {
+  color: #143412;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.district-price-root.dark-theme .rp-floating-item:hover,
+body.dark-theme .district-price-root .rp-floating-item:hover {
+  color: #ffffff;
+  background: rgba(74, 222, 128, 0.16);
+}
+
+.district-price-root .rp-floating-item.active {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+}
+
+/* Keep Toast & Footer clear of the bottom dock */
+.district-price-root .action-toast {
+  bottom: 112px;
+}
+
+.district-price-root .footer-wrapper {
+  padding-bottom: 120px;
+}
