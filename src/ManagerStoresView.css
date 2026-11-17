@@ -1,0 +1,1120 @@
+:root {
+  /* Brand Colors derived from Agri SMART Design System */
+  --brand-dark-green: #2c4f24;
+  --brand-dark-green-hover: #223f1c;
+  --brand-olive: #365e2b;
+  --brand-leaf: #38b449;
+  --brand-leaf-bright: #22c55e;
+  --brand-emerald: #10b981;
+  --brand-teal: #14b8a6;
+  --brand-cyan: #38bdf8;
+  --brand-amber: #f59e0b;
+  --brand-rose: #f43f5e;
+  --brand-purple: #a855f7;
+
+  /* Light Theme — Crystal Clear High-Contrast */
+  --header-bg: #ffffff;
+  --hero-bg: #edf3ed;
+  --page-bg: #ffffff;
+  --section-bg: #f8faf8;
+  --surface-card: #ffffff;
+  --surface-card-subtle: #f8faf8;
+  --card-border: rgba(44, 79, 36, 0.14);
+  --card-border-hover: rgba(44, 79, 36, 0.32);
+  --card-shadow: 0 10px 30px rgba(18, 42, 16, 0.06);
+
+  /* Stat Cards Surface & Values in Light Mode (WCAG AA) */
+  --stat-card-bg: linear-gradient(135deg, #ebf2fe 0%, #e2ecfd 100%);
+  --stat-card-border: rgba(180, 205, 250, 0.7);
+  --stat-card-text-title: #334155;
+  --stat-card-text-value: #0f172a;
+  --stat-val-amber: #d97706;
+  --stat-val-green: #15803d;
+  --stat-val-cyan: #0284c7;
+  --stat-val-slate: #0f172a;
+
+  /* Typography */
+  --text-primary: #0f172a;
+  --text-secondary: #1e293b;
+  --text-muted: #475569;
+  --text-light-sub: #64748b;
+
+  /* Form Inputs */
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+  --input-focus-border: #22c55e;
+  --input-focus-ring: rgba(34, 197, 94, 0.2);
+
+  /* Table styling */
+  --table-head-bg: #f1f5f9;
+  --table-border: #e2e8f0;
+  --table-hover-bg: #f8fafc;
+
+  /* Radii */
+  --radius-pill: 9999px;
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+
+  /* Shadows */
+  --shadow-subtle: 0 4px 18px rgba(18, 42, 16, 0.05);
+  --shadow-card: 0 12px 36px rgba(18, 42, 16, 0.08);
+}
+
+/* Dark Theme Overrides */
+.manager-stores-root.dark-theme,
+body.dark-theme .manager-stores-root {
+  --header-bg: #141b15;
+  --hero-bg: #0e1610;
+  --page-bg: #090e0a;
+  --section-bg: #0d140e;
+  --surface-card: #131c15;
+  --surface-card-subtle: #18231a;
+  --card-border: rgba(74, 222, 128, 0.16);
+  --card-border-hover: rgba(74, 222, 128, 0.35);
+
+  --stat-card-bg: linear-gradient(135deg, #16241b 0%, #111e15 100%);
+  --stat-card-border: rgba(74, 222, 128, 0.2);
+  --stat-card-text-title: #8bb394;
+  --stat-card-text-value: #ecfaee;
+  --stat-val-amber: #fbbf24;
+  --stat-val-green: #4ade80;
+  --stat-val-cyan: #38bdf8;
+  --stat-val-slate: #f8fafc;
+
+  --text-primary: #f0f7f1;
+  --text-secondary: #c2dec6;
+  --text-muted: #8aa68f;
+  --text-light-sub: #637f68;
+
+  --input-bg: #131d14;
+  --input-border: #243826;
+  --input-focus-border: #4ade80;
+  --input-focus-ring: rgba(74, 222, 128, 0.25);
+
+  --table-head-bg: #162419;
+  --table-border: rgba(74, 222, 128, 0.12);
+  --table-hover-bg: #18261c;
+
+  --shadow-card: 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+/* Base Root Container */
+.manager-stores-root {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--page-bg);
+  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================================================
+   1. WHITE WRINKLED TORN-PAPER HEADER (AUTHENTIC DEEP TOOTH PATH)
+   ============================================================================ */
+.manager-stores-root .header-wrapper {
+  position: relative;
+  width: 100%;
+  height: 94px;
+  background: transparent;
+  z-index: 30;
+}
+
+@media (min-width: 768px) {
+  .manager-stores-root .header-wrapper {
+    height: 104px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .manager-stores-root .header-wrapper {
+    height: 112px;
+  }
+}
+
+.manager-stores-root .header-bg-svg-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.manager-stores-root .header-bg-svg-wrap svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.manager-stores-root .header-bg-svg-wrap svg path {
+  fill: var(--header-bg);
+  transition: fill 0.3s ease;
+}
+
+.manager-stores-root .top-nav {
+  position: relative;
+  z-index: 10;
+  max-width: 1400px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.manager-stores-root .brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  user-select: none;
+}
+
+.manager-stores-root .brand-logo-img {
+  height: 42px;
+  width: auto;
+  max-width: 70px;
+  object-fit: contain;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 2px 6px rgba(34, 197, 94, 0.25));
+  display: block;
+  flex-shrink: 0;
+}
+
+.manager-stores-root .logo-text {
+  font-family: 'Noto Sans Sinhala', 'Abhaya Libre', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--brand-dark-green);
+  line-height: 1;
+}
+
+.manager-stores-root.dark-theme .logo-text {
+  color: #f0f7f1;
+}
+
+.manager-stores-root .logo-text span {
+  color: var(--brand-leaf);
+}
+
+.manager-stores-root .module-tag {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(34, 197, 94, 0.14);
+  color: #16a34a;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  margin-left: 6px;
+}
+
+.manager-stores-root.dark-theme .module-tag {
+  background: rgba(74, 222, 128, 0.16);
+  color: #4ade80;
+}
+
+.manager-stores-root .nav-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.manager-stores-root .theme-toggle-btn {
+  background: rgba(44, 79, 36, 0.08);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.manager-stores-root .theme-toggle-btn:hover {
+  background: rgba(44, 79, 36, 0.15);
+  transform: scale(1.05);
+}
+
+.manager-stores-root.dark-theme .theme-toggle-btn {
+  background: rgba(74, 222, 128, 0.12);
+  border-color: rgba(74, 222, 128, 0.25);
+  color: #4ade80;
+}
+
+.manager-stores-root .nav-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brand-dark-green);
+  background: rgba(44, 79, 36, 0.08);
+  border: 1px solid var(--card-border);
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.manager-stores-root .nav-back-link:hover {
+  background: rgba(44, 79, 36, 0.16);
+  color: var(--brand-dark-green-hover);
+  transform: translateY(-1px);
+}
+
+.manager-stores-root.dark-theme .nav-back-link {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.12);
+  border-color: rgba(74, 222, 128, 0.25);
+}
+
+.manager-stores-root.dark-theme .nav-back-link:hover {
+  background: rgba(74, 222, 128, 0.2);
+  color: #86efac;
+}
+
+/* ============================================================================
+   2. PAGE HERO BANNER (100% Full Width, Edge-to-Edge Overlap)
+   ============================================================================ */
+.manager-stores-root .page-hero-banner {
+  position: relative;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  background-color: var(--hero-bg);
+  background: radial-gradient(circle at 15% 30%, rgba(185, 230, 185, 0.35) 0%, transparent 60%),
+    radial-gradient(circle at 85% 70%, rgba(200, 235, 255, 0.3) 0%, transparent 60%),
+    var(--hero-bg);
+  margin-top: -112px;
+  padding: 128px 36px 36px;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .manager-stores-root .page-hero-banner {
+    margin-top: -94px;
+    padding-top: 108px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.manager-stores-root .hero-doodle-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.12;
+  background-image: radial-gradient(#2d6124 1.2px, transparent 1.2px);
+  background-size: 32px 32px;
+}
+
+.manager-stores-root.dark-theme .hero-doodle-bg {
+  opacity: 0.06;
+}
+
+.manager-stores-root .hero-content-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.manager-stores-root .hero-header-row {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 860px) {
+  .manager-stores-root .hero-header-row {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+.manager-stores-root .hero-page-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+.manager-stores-root .hero-page-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 750px;
+  line-height: 1.6;
+  margin: 6px 0 0 0;
+}
+
+.manager-stores-root .hero-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-card);
+  border: 1px solid var(--card-border);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-subtle);
+  white-space: nowrap;
+}
+
+.manager-stores-root .live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+  animation: pulseLiveDotStores 2s infinite;
+}
+
+@keyframes pulseLiveDotStores {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.6;
+  }
+}
+
+/* ============================================================================
+   3. MAIN CONTAINER & KPI METRIC CARDS
+   ============================================================================ */
+.manager-stores-root .stores-main-container {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 24px 60px;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (max-width: 640px) {
+  .manager-stores-root .stores-main-container {
+    padding: 16px 16px 40px;
+  }
+}
+
+.manager-stores-root .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .manager-stores-root .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .manager-stores-root .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
+.manager-stores-root .stat-card {
+  background: var(--stat-card-bg);
+  border: 1px solid var(--stat-card-border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  box-shadow: 0 4px 18px rgba(18, 42, 16, 0.05);
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.manager-stores-root .stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card);
+}
+
+.manager-stores-root .stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.manager-stores-root .stat-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--stat-card-text-title);
+  letter-spacing: 0.5px;
+}
+
+.manager-stores-root .stat-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(44, 79, 36, 0.08);
+}
+
+.manager-stores-root.dark-theme .stat-icon-wrap {
+  background: rgba(74, 222, 128, 0.12);
+}
+
+.manager-stores-root .stat-value {
+  font-size: 32px;
+  font-weight: 800;
+  font-family: monospace;
+  color: var(--stat-card-text-value);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+.manager-stores-root .stat-value.amber-val {
+  color: var(--stat-val-amber);
+}
+
+.manager-stores-root .stat-value.green-val {
+  color: var(--stat-val-green);
+}
+
+.manager-stores-root .stat-value.cyan-val {
+  color: var(--stat-val-cyan);
+}
+
+.manager-stores-root .stat-value.slate-val {
+  color: var(--stat-val-slate);
+}
+
+.manager-stores-root .stat-subtext {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+/* ============================================================================
+   4. SEARCH & FILTER CARD
+   ============================================================================ */
+.manager-stores-root .filter-card {
+  background: var(--surface-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 18px 22px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: border-color 0.25s ease;
+}
+
+.manager-stores-root .filter-card:hover {
+  border-color: var(--card-border-hover);
+}
+
+.manager-stores-root .filter-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .manager-stores-root .filter-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.manager-stores-root .search-input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.manager-stores-root .search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.manager-stores-root .search-input {
+  width: 100%;
+  padding: 10px 38px 10px 42px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.manager-stores-root .search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.manager-stores-root .search-input:focus {
+  border-color: var(--brand-leaf-bright);
+  box-shadow: 0 0 0 3px var(--input-focus-ring);
+}
+
+.manager-stores-root .search-clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.15s ease;
+}
+
+.manager-stores-root .search-clear-btn:hover {
+  color: var(--text-primary);
+}
+
+.manager-stores-root .filter-select-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.manager-stores-root .filter-select {
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 12.5px;
+  font-weight: 700;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.manager-stores-root .filter-select:focus {
+  border-color: var(--brand-leaf-bright);
+}
+
+.manager-stores-root .filter-stats-badge {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 4px 10px;
+  background: var(--surface-card-subtle);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-pill);
+}
+
+/* ============================================================================
+   5. REGISTERED STORES DIRECTORY LEDGER TABLE
+   ============================================================================ */
+.manager-stores-root .ledger-card {
+  background: var(--surface-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition: border-color 0.25s ease;
+}
+
+.manager-stores-root .ledger-card:hover {
+  border-color: var(--card-border-hover);
+}
+
+.manager-stores-root .ledger-card-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.manager-stores-root .ledger-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.manager-stores-root .ledger-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+.manager-stores-root .count-pill {
+  font-size: 11px;
+  font-weight: 800;
+  font-family: monospace;
+  background: rgba(34, 197, 94, 0.12);
+  color: #15803d;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.manager-stores-root.dark-theme .count-pill {
+  background: rgba(74, 222, 128, 0.16);
+  color: #4ade80;
+}
+
+.manager-stores-root .refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--surface-card-subtle);
+  border: 1px solid var(--card-border);
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.manager-stores-root .refresh-btn:hover {
+  color: var(--brand-leaf-bright);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.manager-stores-root .ledger-table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.manager-stores-root .stores-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.manager-stores-root .stores-table thead tr {
+  background: var(--table-head-bg);
+  border-bottom: 1px solid var(--table-border);
+}
+
+.manager-stores-root .stores-table th {
+  padding: 13px 18px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.manager-stores-root .stores-table tbody tr {
+  border-bottom: 1px solid var(--table-border);
+  transition: background-color 0.15s ease;
+}
+
+.manager-stores-root .stores-table tbody tr:hover {
+  background-color: var(--table-hover-bg);
+}
+
+.manager-stores-root .stores-table td {
+  padding: 14px 18px;
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.manager-stores-root .store-code-cell {
+  font-family: monospace;
+  font-weight: 800;
+  font-size: 13px;
+  color: #15803d;
+}
+
+.manager-stores-root.dark-theme .store-code-cell {
+  color: #4ade80;
+}
+
+.manager-stores-root .store-name-bold {
+  font-weight: 800;
+  color: var(--text-primary);
+  font-size: 13.5px;
+}
+
+.manager-stores-root .store-address-sub {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.manager-stores-root .owner-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.manager-stores-root .owner-contact-sub {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.manager-stores-root .district-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  white-space: nowrap;
+}
+
+.manager-stores-root.dark-theme .district-tag {
+  background: rgba(251, 191, 36, 0.14);
+  color: #fbbf24;
+}
+
+.manager-stores-root .province-cell {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.manager-stores-root .gps-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 700;
+  font-family: monospace;
+  color: #0284c7;
+  text-decoration: none;
+  background: rgba(2, 132, 199, 0.08);
+  border: 1px solid rgba(2, 132, 199, 0.25);
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  transition: all 0.2s ease;
+}
+
+.manager-stores-root .gps-link:hover {
+  background: rgba(2, 132, 199, 0.18);
+  color: #0369a1;
+  transform: translateY(-1px);
+}
+
+.manager-stores-root.dark-theme .gps-link {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.manager-stores-root .not-pinned-tag {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.manager-stores-root .status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.manager-stores-root .status-pill.active {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.manager-stores-root.dark-theme .status-pill.active {
+  background: rgba(74, 222, 128, 0.14);
+  color: #4ade80;
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+.manager-stores-root .status-pill.pending {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fcd34d;
+}
+
+.manager-stores-root.dark-theme .status-pill.pending {
+  background: rgba(251, 191, 36, 0.14);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+/* Empty / Error / Loading States */
+.manager-stores-root .empty-state-wrap {
+  padding: 56px 24px;
+  text-align: center;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.manager-stores-root .error-state-wrap {
+  padding: 48px 24px;
+  text-align: center;
+  color: #dc2626;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+/* ============================================================================
+   6. MINIMALIST HIGH-CONTRAST BRAND FOOTER (#101811)
+   ============================================================================ */
+.manager-stores-root .footer-wrapper {
+  background: #101811;
+  color: #b7ceb9;
+  padding: 44px 24px 24px;
+  margin-top: auto;
+  border-top: 1px solid rgba(74, 222, 128, 0.18);
+  position: relative;
+  z-index: 10;
+}
+
+.manager-stores-root .footer-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .manager-stores-root .footer-content {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.manager-stores-root .footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.manager-stores-root .footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.manager-stores-root .footer-logo-img {
+  height: 32px;
+  width: auto;
+  max-width: 60px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(34, 197, 94, 0.3));
+}
+
+.manager-stores-root .footer-logo-text {
+  font-family: 'Noto Sans Sinhala', 'Abhaya Libre', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+}
+
+.manager-stores-root .footer-tagline {
+  font-size: 12px;
+  color: #8da490;
+  margin: 0;
+  max-width: 440px;
+  line-height: 1.5;
+}
+
+.manager-stores-root .footer-links-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+}
+
+.manager-stores-root .footer-link-item {
+  color: #c4d7c6;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.manager-stores-root .footer-link-item:hover {
+  color: #4ade80;
+}
+
+.manager-stores-root .footer-bottom {
+  max-width: 1400px;
+  margin: 28px auto 0;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  color: #6d8470;
+}
+
+
+
+
+/* ============================================================================
+   7. FLOATING PILL NAVIGATION DOCK (BOTTOM, BORDERLESS, ALL 14 VISIBLE)
+   ============================================================================ */
+.manager-stores-root .rp-floating-dock {
+  position: fixed !important;
+  top: auto !important;
+  bottom: 18px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 950 !important;
+  width: max-content;
+  max-width: min(1140px, calc(100vw - 28px));
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: none;
+}
+
+.manager-stores-root .rp-floating-pill {
+  pointer-events: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 5px 6px;
+  padding: 8px 14px;
+  border-radius: 26px;
+  background: rgba(235, 244, 236, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: none !important;
+  outline: none !important;
+  box-shadow:
+    0 14px 36px rgba(18, 42, 16, 0.18),
+    0 4px 12px rgba(22, 101, 52, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.manager-stores-root.dark-theme .rp-floating-pill,
+body.dark-theme .manager-stores-root .rp-floating-pill {
+  background: rgba(26, 40, 29, 0.92);
+  border: none !important;
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.78),
+    0 4px 14px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(74, 222, 128, 0.14);
+}
+
+.manager-stores-root .rp-floating-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  color: #2f4e27;
+  text-decoration: none;
+  white-space: nowrap;
+  border: none !important;
+  transition: all 0.2s ease;
+}
+
+.manager-stores-root.dark-theme .rp-floating-item,
+body.dark-theme .manager-stores-root .rp-floating-item {
+  color: #b7d7bc;
+}
+
+.manager-stores-root .rp-floating-item:hover {
+  color: #143412;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.manager-stores-root.dark-theme .rp-floating-item:hover,
+body.dark-theme .manager-stores-root .rp-floating-item:hover {
+  color: #ffffff;
+  background: rgba(74, 222, 128, 0.16);
+}
+
+.manager-stores-root .rp-floating-item.active {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+}
+
+/* Keep Footer clear of the bottom dock */
+.manager-stores-root .footer-wrapper {
+  padding-bottom: 120px;
+}
