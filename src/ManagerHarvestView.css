@@ -1,0 +1,1121 @@
+:root {
+  /* Brand Colors derived from Agri SMART Design System */
+  --brand-dark-green: #2c4f24;
+  --brand-dark-green-hover: #223f1c;
+  --brand-olive: #365e2b;
+  --brand-leaf: #38b449;
+  --brand-leaf-bright: #22c55e;
+  --brand-emerald: #10b981;
+  --brand-teal: #14b8a6;
+  --brand-cyan: #38bdf8;
+  --brand-amber: #f59e0b;
+  --brand-rose: #f43f5e;
+  --brand-purple: #a855f7;
+
+  /* Light Theme */
+  --header-bg: #ffffff;
+  --hero-bg: #edf3ed;
+  --page-bg: #ffffff;
+  --section-bg: #f9fbf9;
+  --surface-card: #ffffff;
+  --surface-card-subtle: #f8faf8;
+  --card-border: rgba(44, 79, 36, 0.12);
+  --card-border-hover: rgba(44, 79, 36, 0.28);
+  --card-shadow: 0 10px 30px rgba(18, 42, 16, 0.06);
+
+  /* Stat Cards Surface */
+  --stat-card-bg: linear-gradient(135deg, #ebf2fe 0%, #e2ecfd 100%);
+  --stat-card-border: rgba(180, 205, 250, 0.65);
+  --stat-card-text-title: #4a617d;
+  --stat-card-text-value: #162a42;
+
+  /* Text */
+  --text-primary: #172a15;
+  --text-secondary: #2f4e27;
+  --text-muted: #5e775a;
+  --text-light-sub: #789274;
+
+  /* Form Inputs */
+  --input-bg: #ffffff;
+  --input-border: #d4e0d2;
+  --input-focus-border: #22c55e;
+  --input-focus-ring: rgba(34, 197, 94, 0.18);
+
+  /* Radii */
+  --radius-pill: 9999px;
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+
+  /* Shadows */
+  --shadow-subtle: 0 4px 18px rgba(18, 42, 16, 0.05);
+  --shadow-card: 0 12px 36px rgba(18, 42, 16, 0.08);
+  --shadow-elevated: 0 20px 48px rgba(18, 42, 16, 0.12);
+}
+
+/* Dark Theme Overrides */
+.manager-harvest-root.dark-theme,
+body.dark-theme .manager-harvest-root {
+  --header-bg: #141b15;
+  --hero-bg: #0e1610;
+  --page-bg: #090e0a;
+  --section-bg: #0d140e;
+  --surface-card: #131c15;
+  --surface-card-subtle: #18231a;
+  --card-border: rgba(74, 222, 128, 0.16);
+  --card-border-hover: rgba(74, 222, 128, 0.35);
+
+  --stat-card-bg: linear-gradient(135deg, #16241b 0%, #111e15 100%);
+  --stat-card-border: rgba(74, 222, 128, 0.2);
+  --stat-card-text-title: #8bb394;
+  --stat-card-text-value: #ecfaee;
+
+  --text-primary: #f0f7f1;
+  --text-secondary: #c2dec6;
+  --text-muted: #8aa68f;
+  --text-light-sub: #637f68;
+
+  --input-bg: #131d14;
+  --input-border: #243826;
+  --input-focus-border: #4ade80;
+  --input-focus-ring: rgba(74, 222, 128, 0.25);
+
+  --shadow-card: 0 12px 36px rgba(0, 0, 0, 0.45);
+  --shadow-elevated: 0 20px 48px rgba(0, 0, 0, 0.6);
+}
+
+/* Base Root Container */
+.manager-harvest-root {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--page-bg);
+  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================================================
+   1. WHITE WRINKLED TORN-PAPER HEADER (MATCHING DASHBOARD & STORE ORDERS)
+   ============================================================================ */
+.manager-harvest-root .header-wrapper {
+  position: relative;
+  width: 100%;
+  height: 94px;
+  background: transparent;
+  z-index: 30;
+}
+
+@media (min-width: 768px) {
+  .manager-harvest-root .header-wrapper {
+    height: 104px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .manager-harvest-root .header-wrapper {
+    height: 112px;
+  }
+}
+
+.manager-harvest-root .header-bg-svg-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.manager-harvest-root .header-bg-svg-wrap svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.manager-harvest-root .header-bg-svg-wrap svg path {
+  fill: var(--header-bg);
+  transition: fill 0.3s ease;
+}
+
+.manager-harvest-root .top-nav {
+  position: relative;
+  z-index: 5;
+  max-width: 1400px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (min-width: 1024px) {
+  .manager-harvest-root .top-nav {
+    padding: 0 36px;
+  }
+}
+
+.manager-harvest-root .brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  user-select: none;
+  transition: transform 0.2s ease;
+}
+
+.manager-harvest-root .brand-logo:hover {
+  transform: translateY(-1px);
+}
+
+.manager-harvest-root .brand-logo-img {
+  height: 42px;
+  width: auto;
+  max-width: 70px;
+  object-fit: contain;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 2px 6px rgba(34, 197, 94, 0.25));
+  display: block;
+  flex-shrink: 0;
+}
+
+.manager-harvest-root .logo-text {
+  font-family: 'Noto Sans Sinhala', 'Abhaya Libre', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--brand-dark-green);
+  letter-spacing: -0.3px;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  line-height: 1;
+}
+
+.manager-harvest-root .logo-text span {
+  color: var(--brand-leaf);
+}
+
+.manager-harvest-root.dark-theme .logo-text,
+body.dark-theme .manager-harvest-root .logo-text {
+  color: #f0f7f1;
+}
+
+.manager-harvest-root.dark-theme .logo-text span,
+body.dark-theme .manager-harvest-root .logo-text span {
+  color: #4ade80;
+}
+
+.manager-harvest-root .module-tag {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(34, 197, 94, 0.14);
+  color: #16a34a;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  margin-left: 6px;
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .manager-harvest-root .module-tag {
+    display: inline-block;
+  }
+}
+
+.manager-harvest-root.dark-theme .module-tag,
+body.dark-theme .manager-harvest-root .module-tag {
+  background: rgba(74, 222, 128, 0.16);
+  color: #4ade80;
+}
+
+.manager-harvest-root .nav-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.manager-harvest-root .theme-toggle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(44, 79, 36, 0.08);
+  border: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: all 0.25s ease;
+}
+
+.manager-harvest-root .theme-toggle-btn:hover {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--brand-leaf);
+  transform: rotate(15deg) scale(1.05);
+}
+
+.manager-harvest-root.dark-theme .theme-toggle-btn,
+body.dark-theme .manager-harvest-root .theme-toggle-btn {
+  background: rgba(74, 222, 128, 0.1);
+  border-color: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+}
+
+.manager-harvest-root .nav-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--surface-card);
+  border: 1px solid var(--card-border);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.manager-harvest-root .nav-back-link:hover {
+  border-color: var(--brand-leaf-bright);
+  color: var(--brand-leaf);
+  transform: translateX(-2px);
+}
+
+/* ============================================================================
+   2. PAGE HERO BANNER (100% Full Width, Edge-to-Edge Overlap)
+   ============================================================================ */
+.manager-harvest-root .page-hero-banner {
+  position: relative;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  background-color: var(--hero-bg);
+  background: radial-gradient(circle at 15% 30%, rgba(185, 230, 185, 0.35) 0%, transparent 60%),
+    radial-gradient(circle at 85% 70%, rgba(200, 235, 255, 0.3) 0%, transparent 60%),
+    var(--hero-bg);
+  margin-top: -112px;
+  padding: 128px 36px 36px;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .manager-harvest-root .page-hero-banner {
+    margin-top: -94px;
+    padding-top: 108px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.manager-harvest-root .hero-doodle-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.12;
+  background-image: radial-gradient(#2d6124 1.2px, transparent 1.2px);
+  background-size: 32px 32px;
+}
+
+.manager-harvest-root.dark-theme .hero-doodle-bg,
+body.dark-theme .manager-harvest-root .hero-doodle-bg {
+  opacity: 0.06;
+}
+
+.manager-harvest-root .hero-content-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.manager-harvest-root .hero-page-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: -0.5px;
+}
+
+.manager-harvest-root .hero-page-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 760px;
+  line-height: 1.6;
+}
+
+/* ============================================================================
+   3. MAIN CONTENT CONTAINER
+   ============================================================================ */
+.manager-harvest-container {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 24px 60px;
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.manager-harvest-root .surface-card {
+  background: var(--surface-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.manager-harvest-root .surface-card:hover {
+  border-color: var(--card-border-hover);
+}
+
+/* ============================================================================
+   4. KPI SUMMARY STATS CARDS (EXACT MATCH TO DASHBOARD & STORE ORDERS)
+   ============================================================================ */
+.manager-harvest-root .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .manager-harvest-root .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .manager-harvest-root .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
+.manager-harvest-root .stat-card {
+  background: var(--stat-card-bg);
+  border: 1px solid var(--stat-card-border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  box-shadow: 0 4px 18px rgba(18, 42, 16, 0.05);
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+
+.manager-harvest-root .stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card);
+}
+
+.manager-harvest-root .stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.manager-harvest-root .stat-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--stat-card-text-title);
+}
+
+.manager-harvest-root .stat-trend {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+}
+
+.manager-harvest-root.dark-theme .stat-trend,
+body.dark-theme .manager-harvest-root .stat-trend {
+  background: rgba(74, 222, 128, 0.18);
+  color: #4ade80;
+}
+
+.manager-harvest-root .stat-trend.pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.manager-harvest-root .stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--stat-card-text-value);
+  line-height: 1.1;
+  font-family: monospace;
+  letter-spacing: -0.5px;
+}
+
+.manager-harvest-root .stat-unit {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+/* ============================================================================
+   5. FILTER CONTROL BAR (EXACT MATCH TO STORE ORDERS)
+   ============================================================================ */
+.manager-harvest-root .filter-bar-card {
+  padding: 18px 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.manager-harvest-root .search-box-wrap {
+  position: relative;
+  flex: 1 1 260px;
+  min-width: 220px;
+}
+
+.manager-harvest-root .search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.manager-harvest-root .filter-search-input {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  font-size: 12.5px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  outline: none;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.manager-harvest-root .filter-search-input:focus {
+  border-color: var(--input-focus-border);
+  box-shadow: 0 0 0 3px var(--input-focus-ring);
+}
+
+.manager-harvest-root .filter-controls-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.manager-harvest-root .date-filter-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+  padding: 5px 12px;
+}
+
+.manager-harvest-root .date-filter-input {
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  font-family: monospace;
+  font-weight: 600;
+  color: var(--text-primary);
+  outline: none;
+  cursor: pointer;
+}
+
+.manager-harvest-root .clear-pill-btn {
+  font-size: 11px;
+  font-weight: 700;
+  color: #ef4444;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.manager-harvest-root .clear-pill-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.manager-harvest-root .filter-select-dropdown {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+  padding: 9px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.25s ease;
+}
+
+.manager-harvest-root .filter-select-dropdown:focus {
+  border-color: var(--input-focus-border);
+}
+
+.manager-harvest-root .refresh-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 9px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.manager-harvest-root .refresh-action-btn:hover {
+  border-color: var(--brand-leaf-bright);
+  color: var(--brand-leaf);
+}
+
+/* ============================================================================
+   6. LEDGER TABLE CARD
+   ============================================================================ */
+.manager-harvest-root .table-card-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.manager-harvest-root .table-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.manager-harvest-root .table-card-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.manager-harvest-root .table-count-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: rgba(34, 197, 94, 0.14);
+  color: #16a34a;
+}
+
+.manager-harvest-root.dark-theme .table-count-badge,
+body.dark-theme .manager-harvest-root .table-count-badge {
+  background: rgba(74, 222, 128, 0.16);
+  color: #4ade80;
+}
+
+.manager-harvest-root .table-date-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
+.manager-harvest-root .table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.manager-harvest-root .harvest-ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 12.5px;
+}
+
+.manager-harvest-root .harvest-ledger-table thead {
+  background: var(--surface-card-subtle);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.manager-harvest-root .harvest-ledger-table th {
+  padding: 14px 18px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.manager-harvest-root .harvest-ledger-table th.text-right,
+.manager-harvest-root .harvest-ledger-table td.text-right {
+  text-align: right;
+}
+
+.manager-harvest-root .harvest-ledger-table tbody tr {
+  border-bottom: 1px solid var(--card-border);
+  transition: background-color 0.2s ease;
+}
+
+.manager-harvest-root .harvest-ledger-table tbody tr:hover {
+  background-color: rgba(34, 197, 94, 0.04);
+}
+
+.manager-harvest-root.dark-theme .harvest-ledger-table tbody tr:hover,
+body.dark-theme .manager-harvest-root .harvest-ledger-table tbody tr:hover {
+  background-color: rgba(74, 222, 128, 0.04);
+}
+
+.manager-harvest-root .harvest-ledger-table td {
+  padding: 14px 18px;
+  vertical-align: middle;
+  color: var(--text-primary);
+}
+
+/* Cell typography */
+.manager-harvest-root .harvest-ref-text {
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--brand-dark-green);
+  white-space: nowrap;
+}
+
+.manager-harvest-root.dark-theme .harvest-ref-text,
+body.dark-theme .manager-harvest-root .harvest-ref-text {
+  color: #4ade80;
+}
+
+.manager-harvest-root .date-text {
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.manager-harvest-root .farmer-name {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.manager-harvest-root .farm-subtext {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.manager-harvest-root .district-tag {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brand-amber);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.manager-harvest-root .hub-subtext {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.manager-harvest-root .produce-name {
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.manager-harvest-root .produce-category {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+/* Status Pills */
+.manager-harvest-root .status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.manager-harvest-root .status-badge.pending {
+  background: rgba(245, 158, 11, 0.14);
+  color: #d97706;
+}
+
+.manager-harvest-root.dark-theme .status-badge.pending,
+body.dark-theme .manager-harvest-root .status-badge.pending {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+}
+
+.manager-harvest-root .status-badge.price_set {
+  background: rgba(56, 189, 248, 0.14);
+  color: #0284c7;
+}
+
+.manager-harvest-root.dark-theme .status-badge.price_set,
+body.dark-theme .manager-harvest-root .status-badge.price_set {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+}
+
+.manager-harvest-root .status-badge.confirmed {
+  background: rgba(34, 197, 94, 0.14);
+  color: #16a34a;
+}
+
+.manager-harvest-root.dark-theme .status-badge.confirmed,
+body.dark-theme .manager-harvest-root .status-badge.confirmed {
+  background: rgba(74, 222, 128, 0.18);
+  color: #4ade80;
+}
+
+.manager-harvest-root .status-badge.booked {
+  background: rgba(99, 102, 241, 0.14);
+  color: #6366f1;
+}
+
+.manager-harvest-root.dark-theme .status-badge.booked,
+body.dark-theme .manager-harvest-root .status-badge.booked {
+  background: rgba(99, 102, 241, 0.2);
+  color: #818cf8;
+}
+
+.manager-harvest-root .status-badge.partially_purchased {
+  background: rgba(168, 85, 247, 0.14);
+  color: #9333ea;
+}
+
+.manager-harvest-root.dark-theme .status-badge.partially_purchased,
+body.dark-theme .manager-harvest-root .status-badge.partially_purchased {
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+}
+
+.manager-harvest-root .status-badge.purchased {
+  background: rgba(16, 185, 129, 0.16);
+  color: #059669;
+}
+
+.manager-harvest-root.dark-theme .status-badge.purchased,
+body.dark-theme .manager-harvest-root .status-badge.purchased {
+  background: rgba(16, 185, 129, 0.22);
+  color: #10b981;
+}
+
+.manager-harvest-root .status-badge.rejected,
+.manager-harvest-root .status-badge.cancelled {
+  background: rgba(239, 68, 68, 0.14);
+  color: #dc2626;
+}
+
+.manager-harvest-root.dark-theme .status-badge.rejected,
+.manager-harvest-root.dark-theme .status-badge.cancelled,
+body.dark-theme .manager-harvest-root .status-badge.rejected,
+body.dark-theme .manager-harvest-root .status-badge.cancelled {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+/* Empty / Loading State */
+.manager-harvest-root .table-empty-box {
+  padding: 56px 20px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ============================================================================
+   7. DARK FOOTER (EXACT MATCH TO MANAGER DASHBOARD)
+   ============================================================================ */
+.manager-harvest-root .footer-wrapper {
+  background: #101811;
+  color: #b7ceb9;
+  padding: 60px 36px 30px;
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.manager-harvest-root .footer-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+@media (min-width: 900px) {
+  .manager-harvest-root .footer-content {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+}
+
+.manager-harvest-root .footer-brand {
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.manager-harvest-root .footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  margin-bottom: 8px;
+  white-space: nowrap;
+}
+
+.manager-harvest-root .footer-logo-img {
+  height: 48px;
+  width: auto;
+  max-width: 80px;
+  object-fit: contain;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 2px 8px rgba(34, 197, 94, 0.3));
+  display: block;
+  flex-shrink: 0;
+}
+
+.manager-harvest-root .footer-logo-text {
+  font-family: 'Noto Sans Sinhala', 'Abhaya Libre', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: #22c55e;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.manager-harvest-root .footer-logo-text span {
+  color: #22c55e;
+}
+
+.manager-harvest-root .footer-tagline {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #ffffff;
+  white-space: nowrap;
+  margin: 4px 0 0 0;
+  letter-spacing: 0.25px;
+  opacity: 0.95;
+}
+
+.manager-harvest-root .footer-links-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 24px;
+  max-width: 600px;
+}
+
+.manager-harvest-root .footer-link-item {
+  font-size: 13px;
+  font-weight: 600;
+  color: #b7ceb9;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.manager-harvest-root .footer-link-item:hover {
+  color: #4ade80;
+}
+
+.manager-harvest-root .footer-bottom {
+  max-width: 1400px;
+  margin: 36px auto 0;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #5d7560;
+}
+
+/* Toast */
+.manager-harvest-root .action-toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: var(--surface-card);
+  color: var(--text-primary);
+  border: 1px solid var(--card-border);
+  border-left: 4px solid var(--brand-leaf-bright);
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.manager-harvest-root .action-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+
+
+/* ============================================================================
+   8. FLOATING PILL NAVIGATION DOCK (BOTTOM, BORDERLESS, ALL 14 VISIBLE)
+   ============================================================================ */
+.manager-harvest-root .rp-floating-dock {
+  position: fixed !important;
+  top: auto !important;
+  bottom: 18px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 950 !important;
+  width: max-content;
+  max-width: min(1140px, calc(100vw - 28px));
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: none;
+}
+
+.manager-harvest-root .rp-floating-pill {
+  pointer-events: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 5px 6px;
+  padding: 8px 14px;
+  border-radius: 26px;
+  /* Light mode: සුදු background එකෙන් වෙන් වෙලා පේන්න ලා soft sage-green glass tint එකක් */
+  background: rgba(235, 244, 236, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: none !important;
+  outline: none !important;
+  box-shadow:
+    0 14px 36px rgba(18, 42, 16, 0.18),
+    0 4px 12px rgba(22, 101, 52, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.manager-harvest-root.dark-theme .rp-floating-pill,
+body.dark-theme .manager-harvest-root .rp-floating-pill {
+  /* Dark mode: කළු background (#090e0a) එකෙන් උඩට ඉස්සිලා පේන්න elevated emerald-slate surface එකක් */
+  background: rgba(26, 40, 29, 0.92);
+  border: none !important;
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.78),
+    0 4px 14px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(74, 222, 128, 0.14);
+}
+
+.manager-harvest-root .rp-floating-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  /* Inactive buttons වල අකුරු තව පැහැදිලිව පේන්න contrast වැඩි කළා */
+  color: #2f4e27;
+  text-decoration: none;
+  white-space: nowrap;
+  border: none !important;
+  transition: all 0.2s ease;
+}
+
+.manager-harvest-root.dark-theme .rp-floating-item,
+body.dark-theme .manager-harvest-root .rp-floating-item {
+  color: #b7d7bc;
+}
+
+.manager-harvest-root .rp-floating-item:hover {
+  color: #143412;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.manager-harvest-root.dark-theme .rp-floating-item:hover,
+body.dark-theme .manager-harvest-root .rp-floating-item:hover {
+  color: #ffffff;
+  background: rgba(74, 222, 128, 0.16);
+}
+
+.manager-harvest-root .rp-floating-item.active {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+}
+
+/* Keep Toast & Footer clear of the bottom dock */
+.manager-harvest-root .action-toast {
+  bottom: 112px;
+}
+
+.manager-harvest-root .footer-wrapper {
+  padding-bottom: 120px;
+}
