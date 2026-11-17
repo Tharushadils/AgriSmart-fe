@@ -1,0 +1,544 @@
+:root {
+  --brand-dark-green: #2c4f24;
+  --brand-dark-green-hover: #223f1c;
+  --brand-olive: #365e2b;
+  --brand-leaf: #38b449;
+  --brand-leaf-bright: #22c55e;
+  --brand-emerald: #10b981;
+  --brand-teal: #14b8a6;
+  --brand-cyan: #38bdf8;
+  --brand-amber: #f59e0b;
+  --brand-rose: #f43f5e;
+
+  /* Light Theme */
+  --header-bg: #ffffff;
+  --hero-bg: #edf3ed;
+  --page-bg: #ffffff;
+  --section-bg: #f9fbf9;
+  --surface-card: #ffffff;
+  --surface-card-subtle: #f8faf8;
+  --card-border: rgba(44, 79, 36, 0.12);
+  --card-border-hover: rgba(44, 79, 36, 0.28);
+  --card-shadow: 0 10px 30px rgba(18, 42, 16, 0.06);
+
+  --stat-card-bg: linear-gradient(135deg, #ebf2fe 0%, #e2ecfd 100%);
+  --stat-card-border: rgba(180, 205, 250, 0.65);
+  --stat-card-text-title: #4a617d;
+  --stat-card-text-value: #162a42;
+
+  --text-primary: #172a15;
+  --text-secondary: #2f4e27;
+  --text-muted: #5e775a;
+  --text-light-sub: #789274;
+
+  --input-bg: #ffffff;
+  --input-border: #d4e0d2;
+  --input-focus-border: #22c55e;
+  --input-focus-ring: rgba(34, 197, 94, 0.18);
+
+  --radius-pill: 9999px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --shadow-card: 0 12px 36px rgba(18, 42, 16, 0.08);
+}
+
+.procurement-plan-root.dark-theme {
+  --header-bg: #141b15;
+  --hero-bg: #0e1610;
+  --page-bg: #090e0a;
+  --section-bg: #0d140e;
+  --surface-card: #131c15;
+  --surface-card-subtle: #18231a;
+  --card-border: rgba(74, 222, 128, 0.16);
+  --card-border-hover: rgba(74, 222, 128, 0.35);
+
+  --stat-card-bg: linear-gradient(135deg, #16241b 0%, #111e15 100%);
+  --stat-card-border: rgba(74, 222, 128, 0.2);
+  --stat-card-text-title: #8bb394;
+  --stat-card-text-value: #ecfaee;
+
+  --text-primary: #f0f7f1;
+  --text-secondary: #c2dec6;
+  --text-muted: #8aa68f;
+  --text-light-sub: #637f68;
+
+  --input-bg: #131d14;
+  --input-border: #243826;
+  --input-focus-border: #4ade80;
+  --input-focus-ring: rgba(74, 222, 128, 0.25);
+
+  --shadow-card: 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+.procurement-plan-root {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--page-bg);
+  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 1. Header */
+.procurement-plan-root .header-wrapper {
+  position: relative;
+  width: 100%;
+  height: 94px;
+  background: transparent;
+  z-index: 30;
+}
+
+@media (min-width: 768px) {
+  .procurement-plan-root .header-wrapper {
+    height: 104px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .procurement-plan-root .header-wrapper {
+    height: 112px;
+  }
+}
+
+.procurement-plan-root .header-bg-svg-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.procurement-plan-root .header-bg-svg-wrap svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.procurement-plan-root .header-bg-svg-wrap svg path {
+  fill: var(--header-bg);
+  transition: fill 0.3s ease;
+}
+
+.procurement-plan-root .top-nav {
+  position: relative;
+  z-index: 5;
+  max-width: 1400px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.procurement-plan-root .brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  user-select: none;
+}
+
+.procurement-plan-root .logo-sprout-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.procurement-plan-root .logo-text {
+  font-family: 'Noto Sans Sinhala', 'Abhaya Libre', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--brand-dark-green);
+  line-height: 1;
+}
+
+.procurement-plan-root.dark-theme .logo-text {
+  color: #f0f7f1;
+}
+
+.procurement-plan-root .logo-text span {
+  color: var(--brand-leaf);
+}
+
+.procurement-plan-root .module-tag {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(34, 197, 94, 0.14);
+  color: #16a34a;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  margin-left: 6px;
+}
+
+.procurement-plan-root.dark-theme .module-tag {
+  background: rgba(74, 222, 128, 0.16);
+  color: #4ade80;
+}
+
+.procurement-plan-root .nav-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.procurement-plan-root .theme-toggle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(44, 79, 36, 0.08);
+  border: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: all 0.25s ease;
+}
+
+.procurement-plan-root .theme-toggle-btn:hover {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--brand-leaf);
+  transform: rotate(15deg) scale(1.05);
+}
+
+.procurement-plan-root.dark-theme .theme-toggle-btn {
+  background: rgba(74, 222, 128, 0.1);
+  border-color: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+}
+
+.procurement-plan-root .nav-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--surface-card);
+  border: 1px solid var(--card-border);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.procurement-plan-root .nav-back-link:hover {
+  border-color: var(--brand-leaf-bright);
+  color: var(--brand-leaf);
+  transform: translateX(-2px);
+}
+
+/* 2. Hero Banner */
+.procurement-plan-root .page-hero-banner {
+  position: relative;
+  width: 100%;
+  background-color: var(--hero-bg);
+  background: radial-gradient(circle at 15% 30%, rgba(185, 230, 185, 0.35) 0%, transparent 60%),
+    radial-gradient(circle at 85% 70%, rgba(200, 235, 255, 0.3) 0%, transparent 60%),
+    var(--hero-bg);
+  margin-top: -112px;
+  padding: 128px 36px 36px;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .procurement-plan-root .page-hero-banner {
+    margin-top: -94px;
+    padding-top: 108px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.procurement-plan-root .hero-doodle-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.12;
+  background-image: radial-gradient(#2d6124 1.2px, transparent 1.2px);
+  background-size: 32px 32px;
+}
+
+.procurement-plan-root.dark-theme .hero-doodle-bg {
+  opacity: 0.06;
+}
+
+.procurement-plan-root .hero-content-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.procurement-plan-root .hero-page-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: -0.5px;
+}
+
+.procurement-plan-root .hero-page-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 720px;
+  line-height: 1.6;
+}
+
+/* 3. Surface Cards & Container */
+.procurement-plan-root .procurement-plan-container {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 24px 60px;
+  position: relative;
+  z-index: 2;
+  flex: 1 0 auto;
+}
+
+.procurement-plan-root .surface-card {
+  background: var(--surface-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.procurement-plan-root .surface-card:hover {
+  border-color: var(--card-border-hover);
+}
+
+.procurement-plan-root .brand-logo-img {
+  height: 42px;
+  width: auto;
+  max-width: 70px;
+  object-fit: contain;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 2px 6px rgba(34, 197, 94, 0.25));
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ============================================================================
+   ECOSYSTEM FOOTER (AUTHENTIC DARK #101811 BRAND FOOTER)
+   ============================================================================ */
+.procurement-plan-root .app-site-footer {
+  margin-top: auto;
+  background-color: #101811;
+  color: #94a3b8;
+  padding: 48px 36px 32px;
+  border-top: 1px solid rgba(74, 222, 128, 0.15);
+  font-size: 13px;
+  position: relative;
+  z-index: 10;
+}
+
+@media (max-width: 768px) {
+  .procurement-plan-root .app-site-footer {
+    padding: 36px 20px 28px;
+  }
+}
+
+.procurement-plan-root .footer-inner-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+@media (min-width: 860px) {
+  .procurement-plan-root .footer-inner-content {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.procurement-plan-root .footer-logo-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.procurement-plan-root .footer-brand-anchor {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.procurement-plan-root .footer-logo-img {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(34, 197, 94, 0.35));
+}
+
+.procurement-plan-root .footer-logo-text {
+  font-family: 'Noto Sans Sinhala', 'Abhaya Libre', 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #f1f5f9;
+  letter-spacing: -0.3px;
+}
+
+.procurement-plan-root .footer-tagline {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 0;
+  max-width: 440px;
+  line-height: 1.5;
+}
+
+.procurement-plan-root .footer-links-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+}
+
+.procurement-plan-root .footer-link-item {
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.procurement-plan-root .footer-link-item:hover {
+  color: #4ade80;
+}
+
+.procurement-plan-root .footer-bottom {
+  max-width: 1400px;
+  margin: 28px auto 0;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+@media (min-width: 640px) {
+  .procurement-plan-root .footer-bottom {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+/* ============================================================================
+   FLOATING PILL NAVIGATION DOCK (BOTTOM, BORDERLESS, ALL 14 VISIBLE)
+   ============================================================================ */
+.procurement-plan-root .rp-floating-dock {
+  position: fixed !important;
+  top: auto !important;
+  bottom: 18px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 950 !important;
+  width: max-content;
+  max-width: min(1140px, calc(100vw - 28px));
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: none;
+}
+
+.procurement-plan-root .rp-floating-pill {
+  pointer-events: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 5px 6px;
+  padding: 8px 14px;
+  border-radius: 26px;
+  background: rgba(235, 244, 236, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: none !important;
+  outline: none !important;
+  box-shadow:
+    0 14px 36px rgba(18, 42, 16, 0.18),
+    0 4px 12px rgba(22, 101, 52, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.procurement-plan-root.dark-theme .rp-floating-pill,
+body.dark-theme .procurement-plan-root .rp-floating-pill {
+  background: rgba(26, 40, 29, 0.92);
+  border: none !important;
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.78),
+    0 4px 14px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(74, 222, 128, 0.14);
+}
+
+.procurement-plan-root .rp-floating-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  color: #2f4e27;
+  text-decoration: none;
+  white-space: nowrap;
+  border: none !important;
+  transition: all 0.2s ease;
+}
+
+.procurement-plan-root.dark-theme .rp-floating-item,
+body.dark-theme .procurement-plan-root .rp-floating-item {
+  color: #b7d7bc;
+}
+
+.procurement-plan-root .rp-floating-item:hover {
+  color: #143412;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.procurement-plan-root.dark-theme .rp-floating-item:hover,
+body.dark-theme .procurement-plan-root .rp-floating-item:hover {
+  color: #ffffff;
+  background: rgba(74, 222, 128, 0.16);
+}
+
+.procurement-plan-root .rp-floating-item.active {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+}
+
+.procurement-plan-root .app-site-footer {
+  padding-bottom: 120px;
+}
