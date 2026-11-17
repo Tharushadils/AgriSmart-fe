@@ -1,302 +1,58 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import api from '../service/api';
 import logoImg from '../assets/logo.jpg';
 import treeGif from '../assets/treegif.gif';
 import bgVideo from '../assets/background.mp4';
 import '../LandingHome.css';
 
-
 type CategoryKey = 'all' | 'vegetables' | 'fruits' | 'tubers' | 'grains_spices';
 
 interface ProductItem {
+  id: string;
   name: string;
   category: CategoryKey;
   categoryName: string;
   img: string;
-  price: number;
+  price: number; // Wholesale Selling Price
   unit: string;
+  priceDate?: string;
 }
 
-
-const ITEM_IMG: Record<string, string> = {
-  carrots: "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&w=500&q=80",
-  potatoes: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=500&q=80",
-  big_onions: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=format&fit=crop&w=500&q=80",
-  red_onions: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=500&q=80",
-  tomatoes: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=500&q=80",
-  green_chillies: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&w=500&q=80",
-  green_beans: "https://images.unsplash.com/photo-1558818498-28c1e002b655?auto=format&fit=crop&w=500&q=80",
+const FALLBACK_IMAGES: Record<string, string> = {
+  carrot: "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&w=500&q=80",
+  potato: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=500&q=80",
+  onion: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=format&fit=crop&w=500&q=80",
+  tomato: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=500&q=80",
+  chilli: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&w=500&q=80",
+  bean: "https://images.unsplash.com/photo-1558818498-28c1e002b655?auto=format&fit=crop&w=500&q=80",
   coconut: "https://images.unsplash.com/photo-1544378730-8b5104b18790?auto=format&fit=crop&w=500&q=80",
   rice: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=500&q=80",
   brinjal: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=500&q=80",
   pumpkin: "https://images.unsplash.com/photo-1570586437263-ab629fccc818?auto=format&fit=crop&w=500&q=80",
   cabbage: "https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?auto=format&fit=crop&w=500&q=80",
-  leeks: "https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=500&q=80",
+  leek: "https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=500&q=80",
   beetroot: "https://images.unsplash.com/photo-1593105544559-ecb03bf76f82?auto=format&fit=crop&w=500&q=80",
   cucumber: "https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?auto=format&fit=crop&w=500&q=80",
-  bitter_gourd: "https://images.unsplash.com/photo-1628773822503-930a84d4bd28?auto=format&fit=crop&w=500&q=80",
-  snake_gourd: "https://images.unsplash.com/photo-1597362925123-77861d3fbac7?auto=format&fit=crop&w=500&q=80",
-  sweet_corn: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=500&q=80",
-  okra: "https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=500&q=80",
-  radish: "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&w=500&q=80",
-  manioc: "https://images.unsplash.com/photo-1590165482129-1b8b27698780?auto=format&fit=crop&w=500&q=80",
-  sweet_potatoes: "https://images.unsplash.com/photo-1596097635121-14b63b7a0c19?auto=format&fit=crop&w=500&q=80",
   banana: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=500&q=80",
   papaya: "https://images.unsplash.com/photo-1517282009859-f000ec3b26fe?auto=format&fit=crop&w=500&q=80",
-  watermelon: "https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&fit=crop&w=500&q=80",
-  grapes: "https://images.unsplash.com/photo-1537640538966-79f369143f8f?auto=format&fit=crop&w=500&q=80",
-  guava: "https://images.unsplash.com/photo-1536511135898-132386cb691c?auto=format&fit=crop&w=500&q=80",
-  ginger: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=500&q=80",
-  murunga: "https://images.unsplash.com/photo-1597362925123-77861d3fbac7?auto=format&fit=crop&w=500&q=80",
-  gotukola: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=500&q=80"
+  default: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=500&q=80"
 };
 
+const resolveProductImage = (name: string, dbImageUrl?: string): string => {
+  if (dbImageUrl && dbImageUrl.trim()) return dbImageUrl;
+  const lower = name.toLowerCase();
+  const matchedKey = Object.keys(FALLBACK_IMAGES).find((k) => k !== 'default' && lower.includes(k));
+  return matchedKey ? FALLBACK_IMAGES[matchedKey] : FALLBACK_IMAGES.default;
+};
 
-const SRI_LANKA_DISTRICT_DATA: Record<string, ProductItem[]> = {
-  colombo: [
-    { name: "Fresh Carrots", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.carrots, price: 390, unit: "kg" },
-    { name: "Potatoes", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.potatoes, price: 460, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 340, unit: "kg" },
-    { name: "Red Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.red_onions, price: 480, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 280, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 740, unit: "kg" },
-    { name: "Green Beans", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_beans, price: 420, unit: "kg" },
-    { name: "Fresh Coconut", category: "grains_spices", categoryName: "Produce", img: ITEM_IMG.coconut, price: 140, unit: "nut" },
-    { name: "Keeri Samba Rice", category: "grains_spices", categoryName: "Grains", img: ITEM_IMG.rice, price: 240, unit: "kg" },
-    { name: "Eggplants (Brinjal)", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.brinjal, price: 260, unit: "kg" },
-    { name: "Ambul Bananas", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.banana, price: 230, unit: "kg" },
-    { name: "Red Lady Papaya", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.papaya, price: 210, unit: "kg" }
-  ],
-  gampaha: [
-    { name: "Fresh Coconut", category: "grains_spices", categoryName: "Produce", img: ITEM_IMG.coconut, price: 130, unit: "nut" },
-    { name: "Ambul Bananas", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.banana, price: 220, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 270, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 335, unit: "kg" },
-    { name: "Green Beans", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_beans, price: 410, unit: "kg" },
-    { name: "Fresh Carrots", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.carrots, price: 380, unit: "kg" },
-    { name: "Fresh Manioc", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.manioc, price: 160, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 720, unit: "kg" },
-    { name: "Crisp Cucumber", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.cucumber, price: 170, unit: "kg" }
-  ],
-  kalutara: [
-    { name: "Fresh Manioc", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.manioc, price: 150, unit: "kg" },
-    { name: "Sweet Potatoes", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.sweet_potatoes, price: 190, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 340, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 275, unit: "kg" },
-    { name: "Snake Gourd", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.snake_gourd, price: 230, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 730, unit: "kg" },
-    { name: "Ambul Bananas", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.banana, price: 210, unit: "kg" },
-    { name: "Fresh Carrots", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.carrots, price: 385, unit: "kg" }
-  ],
-  kandy: [
-    { name: "Green Beans", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_beans, price: 380, unit: "kg" },
-    { name: "Upcountry Potatoes", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.potatoes, price: 430, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 250, unit: "kg" },
-    { name: "Fresh Carrots", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.carrots, price: 350, unit: "kg" },
-    { name: "White Radish", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.radish, price: 180, unit: "kg" },
-    { name: "Gotukola Greens", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.gotukola, price: 120, unit: "bunch" },
-    { name: "Eggplants (Brinjal)", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.brinjal, price: 230, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 690, unit: "kg" }
-  ],
-  matale: [
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 310, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 230, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 670, unit: "kg" },
-    { name: "Sweet Pumpkin", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.pumpkin, price: 150, unit: "kg" },
-    { name: "Bitter Gourd", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.bitter_gourd, price: 290, unit: "kg" },
-    { name: "Snake Gourd", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.snake_gourd, price: 210, unit: "kg" },
-    { name: "Sweet Corn", category: "grains_spices", categoryName: "Grains", img: ITEM_IMG.sweet_corn, price: 170, unit: "kg" },
-    { name: "Eggplants (Brinjal)", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.brinjal, price: 220, unit: "kg" }
-  ],
-  nuwaraeliya: [
-    { name: "Upcountry Carrots", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.carrots, price: 320, unit: "kg" },
-    { name: "Nuwara Eliya Potatoes", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.potatoes, price: 390, unit: "kg" },
-    { name: "Tender Leeks", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.leeks, price: 240, unit: "kg" },
-    { name: "Green Cabbage", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.cabbage, price: 170, unit: "kg" },
-    { name: "Red Beetroot", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.beetroot, price: 290, unit: "kg" },
-    { name: "Green Beans", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_beans, price: 360, unit: "kg" },
-    { name: "White Radish", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.radish, price: 160, unit: "kg" }
-  ],
-  galle: [
-    { name: "Fresh Carrots", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.carrots, price: 380, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 260, unit: "kg" },
-    { name: "Sweet Potatoes", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.sweet_potatoes, price: 195, unit: "kg" },
-    { name: "Snake Gourd", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.snake_gourd, price: 220, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 340, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 710, unit: "kg" },
-    { name: "Red Lady Papaya", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.papaya, price: 190, unit: "kg" },
-    { name: "Fresh Manioc", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.manioc, price: 160, unit: "kg" }
-  ],
-  matara: [
-    { name: "Sweet Potatoes", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.sweet_potatoes, price: 185, unit: "kg" },
-    { name: "Snake Gourd", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.snake_gourd, price: 215, unit: "kg" },
-    { name: "Sweet Pumpkin", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.pumpkin, price: 160, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 255, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 335, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 700, unit: "kg" },
-    { name: "Ambul Bananas", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.banana, price: 200, unit: "kg" },
-    { name: "Crisp Cucumber", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.cucumber, price: 165, unit: "kg" }
-  ],
-  hambantota: [
-    { name: "Fresh Watermelon", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.watermelon, price: 140, unit: "kg" },
-    { name: "Sweet Pumpkin", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.pumpkin, price: 140, unit: "kg" },
-    { name: "Red Lady Papaya", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.papaya, price: 180, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 680, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 250, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 330, unit: "kg" },
-    { name: "Sweet Potatoes", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.sweet_potatoes, price: 180, unit: "kg" },
-    { name: "Fresh Okra", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.okra, price: 210, unit: "kg" }
-  ],
-  jaffna: [
-    { name: "Jaffna Red Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.red_onions, price: 440, unit: "kg" },
-    { name: "Northern Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 680, unit: "kg" },
-    { name: "Drumsticks (Murunga)", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.murunga, price: 360, unit: "kg" },
-    { name: "Northern Manioc", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.manioc, price: 170, unit: "kg" },
-    { name: "Jaffna Grapes", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.grapes, price: 850, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 270, unit: "kg" },
-    { name: "Eggplants (Brinjal)", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.brinjal, price: 220, unit: "kg" },
-    { name: "Sweet Pumpkin", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.pumpkin, price: 160, unit: "kg" }
-  ],
-  kilinochchi: [
-    { name: "Red Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.red_onions, price: 450, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 670, unit: "kg" },
-    { name: "Drumsticks (Murunga)", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.murunga, price: 350, unit: "kg" },
-    { name: "Sweet Pumpkin", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.pumpkin, price: 150, unit: "kg" },
-    { name: "Fresh Manioc", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.manioc, price: 165, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 335, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 265, unit: "kg" },
-    { name: "Fresh Okra", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.okra, price: 200, unit: "kg" }
-  ],
-  mannar: [
-    { name: "Red Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.red_onions, price: 460, unit: "kg" },
-    { name: "Fresh Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 690, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 270, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 340, unit: "kg" },
-    { name: "Drumsticks (Murunga)", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.murunga, price: 370, unit: "kg" },
-    { name: "Eggplants (Brinjal)", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.brinjal, price: 225, unit: "kg" },
-    { name: "Sweet Potatoes", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.sweet_potatoes, price: 180, unit: "kg" }
-  ],
-  vavuniya: [
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 330, unit: "kg" },
-    { name: "Red Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.red_onions, price: 460, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 675, unit: "kg" },
-    { name: "Sweet Pumpkin", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.pumpkin, price: 145, unit: "kg" },
-    { name: "Samba Rice", category: "grains_spices", categoryName: "Grains", img: ITEM_IMG.rice, price: 220, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 250, unit: "kg" },
-    { name: "Sweet Corn", category: "grains_spices", categoryName: "Grains", img: ITEM_IMG.sweet_corn, price: 170, unit: "kg" }
-  ],
-  mullaitivu: [
-    { name: "Red Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.red_onions, price: 455, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 680, unit: "kg" },
-    { name: "Drumsticks (Murunga)", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.murunga, price: 360, unit: "kg" },
-    { name: "Fresh Manioc", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.manioc, price: 160, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 270, unit: "kg" },
-    { name: "Sweet Pumpkin", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.pumpkin, price: 150, unit: "kg" },
-    { name: "Eggplants (Brinjal)", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.brinjal, price: 215, unit: "kg" }
-  ],
-  batticaloa: [
-    { name: "Eastern Samba Rice", category: "grains_spices", categoryName: "Grains", img: ITEM_IMG.rice, price: 220, unit: "kg" },
-    { name: "Red Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.red_onions, price: 465, unit: "kg" },
-    { name: "Eggplants (Brinjal)", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.brinjal, price: 210, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 690, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 260, unit: "kg" },
-    { name: "Fresh Manioc", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.manioc, price: 170, unit: "kg" },
-    { name: "Sweet Potatoes", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.sweet_potatoes, price: 185, unit: "kg" }
-  ],
-  ampara: [
-    { name: "Samba Rice", category: "grains_spices", categoryName: "Grains", img: ITEM_IMG.rice, price: 215, unit: "kg" },
-    { name: "Sweet Corn", category: "grains_spices", categoryName: "Grains", img: ITEM_IMG.sweet_corn, price: 160, unit: "kg" },
-    { name: "Sweet Pumpkin", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.pumpkin, price: 140, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 250, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 680, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 330, unit: "kg" },
-    { name: "Eggplants (Brinjal)", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.brinjal, price: 205, unit: "kg" }
-  ],
-  trincomalee: [
-    { name: "Red Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.red_onions, price: 460, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 265, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 695, unit: "kg" },
-    { name: "Sweet Pumpkin", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.pumpkin, price: 145, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 335, unit: "kg" },
-    { name: "Eggplants (Brinjal)", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.brinjal, price: 220, unit: "kg" },
-    { name: "Fresh Manioc", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.manioc, price: 170, unit: "kg" }
-  ],
-  kurunegala: [
-    { name: "Fresh Coconut", category: "grains_spices", categoryName: "Produce", img: ITEM_IMG.coconut, price: 125, unit: "nut" },
-    { name: "Ambul Bananas", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.banana, price: 200, unit: "kg" },
-    { name: "Red Lady Papaya", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.papaya, price: 190, unit: "kg" },
-    { name: "Crisp Cucumber", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.cucumber, price: 160, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 325, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 245, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 680, unit: "kg" },
-    { name: "Green Beans", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_beans, price: 390, unit: "kg" }
-  ],
-  puttalam: [
-    { name: "Kalpitiya Red Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.red_onions, price: 445, unit: "kg" },
-    { name: "Red Beetroot", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.beetroot, price: 300, unit: "kg" },
-    { name: "Fresh Guava", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.guava, price: 250, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 250, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 670, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 325, unit: "kg" },
-    { name: "White Radish", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.radish, price: 170, unit: "kg" }
-  ],
-  anuradhapura: [
-    { name: "Keeri Samba Rice", category: "grains_spices", categoryName: "Grains", img: ITEM_IMG.rice, price: 225, unit: "kg" },
-    { name: "Sweet Pumpkin", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.pumpkin, price: 135, unit: "kg" },
-    { name: "Sweet Corn", category: "grains_spices", categoryName: "Grains", img: ITEM_IMG.sweet_corn, price: 165, unit: "kg" },
-    { name: "Fresh Okra", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.okra, price: 205, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 325, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 240, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 670, unit: "kg" },
-    { name: "Eggplants (Brinjal)", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.brinjal, price: 210, unit: "kg" }
-  ],
-  polonnaruwa: [
-    { name: "Nadu & Samba Rice", category: "grains_spices", categoryName: "Grains", img: ITEM_IMG.rice, price: 220, unit: "kg" },
-    { name: "Sweet Corn", category: "grains_spices", categoryName: "Grains", img: ITEM_IMG.sweet_corn, price: 160, unit: "kg" },
-    { name: "Sweet Pumpkin", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.pumpkin, price: 135, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 675, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 245, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 325, unit: "kg" },
-    { name: "Fresh Okra", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.okra, price: 200, unit: "kg" }
-  ],
-  badulla: [
-    { name: "Keppetipola Carrots", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.carrots, price: 330, unit: "kg" },
-    { name: "Tender Leeks", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.leeks, price: 250, unit: "kg" },
-    { name: "Green Cabbage", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.cabbage, price: 175, unit: "kg" },
-    { name: "Red Potatoes", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.potatoes, price: 410, unit: "kg" },
-    { name: "Red Beetroot", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.beetroot, price: 300, unit: "kg" },
-    { name: "Green Beans", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_beans, price: 380, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 240, unit: "kg" }
-  ],
-  monaragala: [
-    { name: "Sweet Corn", category: "grains_spices", categoryName: "Grains", img: ITEM_IMG.sweet_corn, price: 160, unit: "kg" },
-    { name: "Red Lady Papaya", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.papaya, price: 175, unit: "kg" },
-    { name: "Fresh Watermelon", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.watermelon, price: 145, unit: "kg" },
-    { name: "Sweet Pumpkin", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.pumpkin, price: 135, unit: "kg" },
-    { name: "Fresh Manioc", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.manioc, price: 155, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 250, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 680, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 330, unit: "kg" }
-  ],
-  ratnapura: [
-    { name: "Kolikuttu Bananas", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.banana, price: 310, unit: "kg" },
-    { name: "Fresh Manioc", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.manioc, price: 160, unit: "kg" },
-    { name: "Raw Ginger", category: "grains_spices", categoryName: "Spices", img: ITEM_IMG.ginger, price: 860, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 260, unit: "kg" },
-    { name: "Green Beans", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_beans, price: 400, unit: "kg" },
-    { name: "Fresh Carrots", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.carrots, price: 370, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 335, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 710, unit: "kg" }
-  ],
-  kegalle: [
-    { name: "Ambul Bananas", category: "fruits", categoryName: "Fruit", img: ITEM_IMG.banana, price: 210, unit: "kg" },
-    { name: "Fresh Manioc", category: "tubers", categoryName: "Tubers", img: ITEM_IMG.manioc, price: 155, unit: "kg" },
-    { name: "Fresh Coconut", category: "grains_spices", categoryName: "Produce", img: ITEM_IMG.coconut, price: 130, unit: "nut" },
-    { name: "Green Beans", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_beans, price: 395, unit: "kg" },
-    { name: "Ripe Tomatoes", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.tomatoes, price: 255, unit: "kg" },
-    { name: "Fresh Carrots", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.carrots, price: 370, unit: "kg" },
-    { name: "Big Onions", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.big_onions, price: 330, unit: "kg" },
-    { name: "Green Chillies", category: "vegetables", categoryName: "Vegetable", img: ITEM_IMG.green_chillies, price: 700, unit: "kg" }
-  ]
+const mapBackendCategory = (rawCat?: string): { key: CategoryKey; label: string } => {
+  const c = String(rawCat || '').toUpperCase();
+  if (c.includes('FRUIT')) return { key: 'fruits', label: 'Fruits' };
+  if (c.includes('TUBER') || c.includes('ROOT')) return { key: 'tubers', label: 'Tubers & Roots' };
+  if (c.includes('GRAIN') || c.includes('SPICE') || c.includes('RICE')) {
+    return { key: 'grains_spices', label: 'Grains & Spices' };
+  }
+  return { key: 'vegetables', label: 'Fresh Vegetables' };
 };
 
 const DISTRICT_DISPLAY_NAMES: Record<string, string> = {
@@ -327,8 +83,13 @@ const DISTRICT_DISPLAY_NAMES: Record<string, string> = {
   kegalle: "Kegalle District"
 };
 
-const DISTRICT_LIST = Object.keys(DISTRICT_DISPLAY_NAMES);
 
+const toBackendDistrictEnum = (key: string): string => {
+  if (key === 'nuwaraeliya') return 'NUWARA_ELIYA';
+  return key.toUpperCase();
+};
+
+const DISTRICT_LIST = Object.keys(DISTRICT_DISPLAY_NAMES);
 
 export const AgriSmartApp: React.FC = () => {
   const [introVisible, setIntroVisible] = useState<boolean>(true);
@@ -338,10 +99,13 @@ export const AgriSmartApp: React.FC = () => {
   const [currentDistrict, setCurrentDistrict] = useState<string>("colombo");
   const [currentCategory, setCurrentCategory] = useState<CategoryKey>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>(""); // Empty = Latest Released Prices
+
+  const [districtProducts, setDistrictProducts] = useState<ProductItem[]>([]);
+  const [isLoadingPrices, setIsLoadingPrices] = useState<boolean>(false);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const pricesSectionRef = useRef<HTMLElement | null>(null);
-
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -358,6 +122,66 @@ export const AgriSmartApp: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Fetch Real Wholesale Prices from Backend DistrictPricing
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadRealDistrictWholesalePrices = async () => {
+      setIsLoadingPrices(true);
+      try {
+        const backendDistrict = toBackendDistrictEnum(currentDistrict);
+        const params: Record<string, string> = { district: backendDistrict };
+        if (selectedDate) params.date = selectedDate;
+
+        // Try standard district-pricing endpoint
+        let records: any[] = [];
+        try {
+          const res = await api.get('/district-pricing/released', { params });
+          records = res.data?.data || [];
+        } catch {
+          const fallbackRes = await api.get('/harvest-prices/released', { params });
+          records = fallbackRes.data?.data || [];
+        }
+
+        if (!isMounted) return;
+
+        // Deduplicate by productId (keep latest entry per product)
+        const productMap = new Map<string, ProductItem>();
+        for (const rec of records) {
+          const prod = rec.productId;
+          const pId = String(prod?._id || prod || rec._id);
+          if (productMap.has(pId)) continue;
+
+          const prodName = prod?.name || 'Fresh Produce';
+          const catInfo = mapBackendCategory(prod?.category);
+          const wholesalePrice = Number(rec.sellingPrice || 0); // Wholesale Selling Price
+
+          productMap.set(pId, {
+            id: pId,
+            name: prodName,
+            category: catInfo.key,
+            categoryName: catInfo.label,
+            img: resolveProductImage(prodName, prod?.imageUrl),
+            price: wholesalePrice,
+            unit: prod?.unit || 'kg',
+            priceDate: rec.date ? new Date(rec.date).toISOString().split('T')[0] : undefined
+          });
+        }
+
+        setDistrictProducts(Array.from(productMap.values()));
+      } catch (err) {
+        if (isMounted) setDistrictProducts([]);
+      } finally {
+        if (isMounted) setIsLoadingPrices(false);
+      }
+    };
+
+    loadRealDistrictWholesalePrices();
+    return () => {
+      isMounted = false;
+    };
+  }, [currentDistrict, selectedDate]);
+
   const scrollToPrices = () => {
     pricesSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -367,25 +191,20 @@ export const AgriSmartApp: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  
-  const currentDistrictProducts = useMemo(() => {
-    return SRI_LANKA_DISTRICT_DATA[currentDistrict] || SRI_LANKA_DISTRICT_DATA.colombo;
-  }, [currentDistrict]);
-
   const filteredProducts = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    return currentDistrictProducts.filter((p) => {
+    return districtProducts.filter((p) => {
       const matchesCategory = currentCategory === 'all' || p.category === currentCategory;
-      const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.categoryName.toLowerCase().includes(q);
+      const matchesSearch =
+        !q || p.name.toLowerCase().includes(q) || p.categoryName.toLowerCase().includes(q);
       return matchesCategory && matchesSearch;
     });
-  }, [currentDistrictProducts, currentCategory, searchQuery]);
+  }, [districtProducts, currentCategory, searchQuery]);
+
+  const activePriceDateLabel = districtProducts[0]?.priceDate || selectedDate || 'Latest Released';
 
   return (
     <div className="agri-smart-root">
-   
-
-    
       {introVisible && (
         <div id="introScreen" className={introFading ? 'fade-out' : ''}>
           <div className="intro-box">
@@ -411,9 +230,7 @@ export const AgriSmartApp: React.FC = () => {
         </div>
       )}
 
-  
       <div id="mainApp" className={appReady ? 'is-ready' : ''}>
-        {/* Background Atmosphere */}
         <div className="bg-container">
           <video
             ref={videoRef}
@@ -432,7 +249,6 @@ export const AgriSmartApp: React.FC = () => {
 
         <div className="grid-overlay" />
 
-      
         <nav>
           <a href="#" className="logo" onClick={scrollToTop}>
             <img
@@ -447,17 +263,14 @@ export const AgriSmartApp: React.FC = () => {
           </a>
 
           <div className="nav-right">
-            <a href="http://localhost:5173/join-us" className="team-btn">
+            <a href="/login" className="team-btn">
               Join Our Team
             </a>
           </div>
         </nav>
 
-       
         <main>
           <section className="hero">
-            
-
             <h1>
               From
               <br />
@@ -474,15 +287,15 @@ export const AgriSmartApp: React.FC = () => {
               <div
                 className="metric"
                 onClick={scrollToPrices}
-                title="Click to explore Sri Lanka district market prices"
+                title="Click to explore Sri Lanka district wholesale prices"
               >
-                <strong>100+</strong>
-                <small>Town Markets</small>
+                <strong>25</strong>
+                <small>District Markets</small>
               </div>
 
               <div className="metric" onClick={scrollToPrices}>
                 <strong>DAILY</strong>
-                <small>Market Prices</small>
+                <small>Wholesale Rates</small>
               </div>
 
               <div className="metric">
@@ -493,7 +306,6 @@ export const AgriSmartApp: React.FC = () => {
           </section>
         </main>
 
-       
         <section
           className="section-prices"
           id="pricesSection"
@@ -502,28 +314,17 @@ export const AgriSmartApp: React.FC = () => {
           <div className="price-container">
             <div className="price-header">
               <div className="price-header-text">
-               
                 <h2>
                   <span>Sri Lanka</span> District Wholesale Prices
                 </h2>
                 <p>
-                  Select any of the 25 districts or click directly on the interactive map to view real-time grocery prices.
+                  Select any of the 25 districts or click directly on the interactive map to view official released wholesale prices.
                 </p>
-              </div>
-
-              <div className="price-header-stats">
-               
-               
               </div>
             </div>
 
             <div className="dashboard-layout">
-              
               <div className="map-column">
-                <div className="map-column-title">
-                  
-                </div>
-
                 <svg
                   className="sl-svg-map"
                   viewBox="200 30 580 940"
@@ -757,7 +558,6 @@ export const AgriSmartApp: React.FC = () => {
                     </path>
                   </g>
 
-                 
                   {[
                     { id: 'jaffna', name: 'Jaffna', x: 380, y: 75, anchor: 'start', ox: 14 },
                     { id: 'kilinochchi', name: 'Kilinochchi', x: 415, y: 135, anchor: 'start', ox: 14 },
@@ -811,13 +611,10 @@ export const AgriSmartApp: React.FC = () => {
                 <div className="map-hint">Click any district or pin to switch instantly</div>
               </div>
 
-             
               <div className="price-column">
                 <div className="town-control-bar">
                   <div className="control-selectors-row">
-                  
                     <div className="search-group">
-                      
                       <input
                         type="text"
                         className="search-input"
@@ -827,7 +624,6 @@ export const AgriSmartApp: React.FC = () => {
                       />
                     </div>
 
-                  
                     <div className="control-group">
                       <label htmlFor="townSelect">District:</label>
                       <select
@@ -844,7 +640,6 @@ export const AgriSmartApp: React.FC = () => {
                       </select>
                     </div>
 
-                   
                     <div className="control-group">
                       <label htmlFor="categorySelect">Category:</label>
                       <select
@@ -860,9 +655,19 @@ export const AgriSmartApp: React.FC = () => {
                         <option value="grains_spices">Grains & Spices</option>
                       </select>
                     </div>
+
+                    <div className="control-group">
+                      <label htmlFor="priceDateSelect">Date:</label>
+                      <input
+                        id="priceDateSelect"
+                        type="date"
+                        className="town-select"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                      />
+                    </div>
                   </div>
 
-                  
                   <div className="category-pills">
                     {[
                       { key: 'all', label: 'All Products' },
@@ -882,19 +687,31 @@ export const AgriSmartApp: React.FC = () => {
                   </div>
                 </div>
 
-              
                 <div className="district-status-bar">
                   <div className="status-district-name">
-                     {DISTRICT_DISPLAY_NAMES[currentDistrict] || currentDistrict.toUpperCase()} Market
+                    {DISTRICT_DISPLAY_NAMES[currentDistrict] || currentDistrict.toUpperCase()} Wholesale Market
                   </div>
                   <div className="status-item-count">
-                    {filteredProducts.length} Items Listed Today
+                    {isLoadingPrices
+                      ? 'Loading released prices...'
+                      : `${filteredProducts.length} Items (${activePriceDateLabel})`}
                   </div>
                 </div>
 
-                
                 <div className="products-grid">
-                  {filteredProducts.length === 0 ? (
+                  {isLoadingPrices ? (
+                    <div
+                      style={{
+                        gridColumn: '1/-1',
+                        textAlign: 'center',
+                        padding: '50px 20px',
+                        color: '#8ba898',
+                        fontSize: '14px'
+                      }}
+                    >
+                      Fetching official wholesale prices for {DISTRICT_DISPLAY_NAMES[currentDistrict]}...
+                    </div>
+                  ) : filteredProducts.length === 0 ? (
                     <div
                       style={{
                         gridColumn: '1/-1',
@@ -907,13 +724,15 @@ export const AgriSmartApp: React.FC = () => {
                         border: '1px dashed rgba(112,255,154,0.25)'
                       }}
                     >
-                      <div style={{ fontSize: '32px', marginBottom: '10px' }}>🔍</div>
-                      No grocery products found matching "{searchQuery}" in {currentDistrict.toUpperCase()}. Try clearing the search or choosing another category.
+                      <div style={{ fontSize: '32px', marginBottom: '10px' }}>📊</div>
+                      No released wholesale prices found for{' '}
+                      <strong>{DISTRICT_DISPLAY_NAMES[currentDistrict]}</strong>
+                      {selectedDate ? ` on ${selectedDate}` : ''}.
                     </div>
                   ) : (
                     filteredProducts.map((p, idx) => (
                       <div
-                        key={`${p.name}-${idx}`}
+                        key={p.id}
                         className="product-price-card"
                         style={{
                           animation: `textAppear 0.4s ease ${idx * 0.04}s forwards`
@@ -926,17 +745,17 @@ export const AgriSmartApp: React.FC = () => {
                             className="prod-img"
                             loading="lazy"
                             onError={(e) => {
-                              e.currentTarget.src = ITEM_IMG.carrots;
+                              e.currentTarget.src = FALLBACK_IMAGES.default;
                             }}
                           />
                           <span className="prod-cat-badge">{p.categoryName}</span>
-                          <span className="prod-fresh-badge">100% Fresh</span>
+                          <span className="prod-fresh-badge">Wholesale Rate</span>
                         </div>
                         <div className="prod-info">
                           <h4 className="prod-name">{p.name}</h4>
                           <div className="price-container-inner">
                             <span className="price-currency">Rs.</span>
-                            <span className="price-amount">{p.price}</span>
+                            <span className="price-amount">{p.price.toLocaleString()}</span>
                             <span className="price-unit">/ {p.unit || 'kg'}</span>
                           </div>
                         </div>
@@ -948,26 +767,24 @@ export const AgriSmartApp: React.FC = () => {
             </div>
           </div>
 
-        <footer className="app-footer">
-        <div className="footer-brand">
-            <img
-            src={"src/assets/sofengee.jpg"}
-            alt="Sofengee"
-            className="footer-logo"
-            />
+          <footer className="app-footer">
+            <div className="footer-brand">
+              <img
+                src={"src/assets/sofengee.jpg"}
+                alt="Sofengee"
+                className="footer-logo"
+              />
+              <p>
+                Solution by <span>Sofengiee</span>
+              </p>
+            </div>
 
-            <p>
-            Solution by <span>Sofengiee</span>
+            <div className="footer-divider"></div>
+
+            <p className="footer-copyright">
+              © 2026 Sofengiee. All rights reserved.
             </p>
-        </div>
-
-        <div className="footer-divider"></div>
-
-        <p className="footer-copyright">
-            © 2026 Sofengiee. All rights reserved.
-        </p>
-        </footer>
-
+          </footer>
         </section>
       </div>
     </div>
