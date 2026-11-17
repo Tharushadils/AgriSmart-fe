@@ -1,0 +1,1412 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Brand Colors derived from Agri SMART Design System */
+    --brand-dark-green: #2c4f24;
+    --brand-dark-green-hover: #223f1c;
+    --brand-olive: #365e2b;
+    --brand-leaf: #38b449;
+    --brand-leaf-bright: #22c55e;
+    --brand-emerald: #10b981;
+    --brand-teal: #14b8a6;
+    --brand-cyan: #38bdf8;
+    --brand-amber: #f59e0b;
+    --brand-rose: #f43f5e;
+    --brand-purple: #a855f7;
+
+    /* Light Theme (Dashboard Standard) */
+    --header-bg: #ffffff;
+    --hero-bg: #edf3ed;
+    --page-bg: #ffffff;
+    --section-bg: #f9fbf9;
+    --surface-card: #ffffff;
+    --surface-card-subtle: #f8faf8;
+    --card-border: rgba(44, 79, 36, 0.12);
+    --card-border-hover: rgba(44, 79, 36, 0.28);
+    --card-shadow: 0 10px 30px rgba(18, 42, 16, 0.06);
+
+    /* Stat Cards Surface */
+    --stat-card-bg: linear-gradient(135deg, #ebf2fe 0%, #e2ecfd 100%);
+    --stat-card-border: rgba(180, 205, 250, 0.65);
+    --stat-card-text-title: #4a617d;
+    --stat-card-text-value: #162a42;
+
+    /* Text */
+    --text-primary: #172a15;
+    --text-secondary: #2f4e27;
+    --text-muted: #5e775a;
+    --text-light-sub: #789274;
+
+    /* Action Grid */
+    --action-circle-bg: #ebf7ed;
+    --action-circle-icon: #2a943b;
+    --action-circle-border: rgba(56, 180, 73, 0.22);
+    --action-active-circle-bg: #1fac3e;
+    --action-active-circle-shadow: 0 8px 22px rgba(31, 172, 62, 0.35);
+
+    /* Form Inputs */
+    --input-bg: #ffffff;
+    --input-border: #d4e0d2;
+    --input-focus-border: #22c55e;
+    --input-focus-ring: rgba(34, 197, 94, 0.18);
+
+    /* Radii */
+    --radius-pill: 9999px;
+    --radius-xs: 6px;
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 18px;
+    --radius-xl: 26px;
+
+    /* Shadows */
+    --shadow-subtle: 0 4px 18px rgba(18, 42, 16, 0.05);
+    --shadow-card: 0 12px 36px rgba(18, 42, 16, 0.08);
+    --shadow-elevated: 0 20px 48px rgba(18, 42, 16, 0.12);
+}
+
+/* Dark Theme Overrides */
+.farm-dashboard-root.dark-theme,
+body.dark-theme {
+    --header-bg: #141b15;
+    --hero-bg: #0e1610;
+    --page-bg: #090e0a;
+    --section-bg: #0d140e;
+    --surface-card: #131c15;
+    --surface-card-subtle: #18231a;
+    --card-border: rgba(74, 222, 128, 0.16);
+    --card-border-hover: rgba(74, 222, 128, 0.35);
+
+    --stat-card-bg: linear-gradient(135deg, #16241b 0%, #111e15 100%);
+    --stat-card-border: rgba(74, 222, 128, 0.2);
+    --stat-card-text-title: #8bb394;
+    --stat-card-text-value: #ecfaee;
+
+    --text-primary: #f0f7f1;
+    --text-secondary: #c2dec6;
+    --text-muted: #8aa68f;
+    --text-light-sub: #637f68;
+
+    --action-circle-bg: #132417;
+    --action-circle-icon: #4ade80;
+    --action-circle-border: rgba(74, 222, 128, 0.25);
+    --action-active-circle-bg: #22c55e;
+    --shadow-card: 0 12px 36px rgba(0, 0, 0, 0.45);
+
+    --input-bg: #101711;
+    --input-border: #223725;
+    --input-focus-border: #4ade80;
+    --input-focus-ring: rgba(74, 222, 128, 0.22);
+}
+
+/* ROOT CONTAINER */
+.farm-dashboard-root {
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--page-bg);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ============================================================================
+   1. WHITE WRINKLED HEADER (CLEAN TORN-PAPER BOTTOM EDGE)
+   ============================================================================ */
+.header-wrapper {
+    position: relative;
+    width: 100%;
+    height: 94px;
+    background: transparent;
+    z-index: 30;
+}
+
+@media (min-width: 768px) {
+    .header-wrapper {
+        height: 104px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .header-wrapper {
+        height: 112px;
+    }
+}
+
+.header-bg-svg-wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.header-bg-svg-wrap svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.farm-dashboard-root.dark-theme .header-bg-svg-wrap path {
+    fill: #141b15 !important;
+}
+
+.top-nav {
+    position: relative;
+    z-index: 2;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Brand Logo */
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.logo-sprout-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 4px 8px rgba(34, 197, 94, 0.25));
+    transition: transform 0.2s ease;
+}
+
+.brand-logo:hover .logo-sprout-icon {
+    transform: rotate(-6deg) scale(1.05);
+}
+
+.logo-sprout-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.logo-text {
+    font-family: 'Noto Sans Sinhala', 'Abhaya Libre', 'Plus Jakarta Sans', serif;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #1b4d1b;
+}
+
+.farm-dashboard-root.dark-theme .logo-text {
+    color: #4ade80;
+}
+
+.logo-text span {
+    color: #2e7d32;
+    font-weight: 700;
+}
+
+.farm-dashboard-root.dark-theme .logo-text span {
+    color: #86efac;
+}
+
+.module-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    background: rgba(34, 197, 94, 0.14);
+    border: 1px solid rgba(34, 197, 94, 0.35);
+    color: #16a34a;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 6px;
+}
+
+.farm-dashboard-root.dark-theme .module-tag {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: rgba(74, 222, 128, 0.4);
+    color: #4ade80;
+}
+
+/* Right Nav Controls */
+.nav-right-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.theme-toggle-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--card-border);
+    background: var(--surface-card);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-subtle);
+    transition: all 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+    transform: rotate(18deg) scale(1.05);
+    border-color: var(--brand-leaf-bright);
+    color: var(--brand-leaf-bright);
+}
+
+/* User Profile Menu */
+.user-profile-menu {
+    position: relative;
+}
+
+.user-profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px 6px 8px;
+    background: var(--surface-card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    box-shadow: var(--shadow-subtle);
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+}
+
+.user-profile-btn:hover {
+    border-color: var(--brand-leaf);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+}
+
+.user-avatar-circle {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #22c55e, #15803d);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-status-dot {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #22c55e;
+    border: 2px solid var(--surface-card);
+}
+
+.user-profile-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Profile Dropdown */
+.profile-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 250px;
+    background: var(--surface-card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-elevated);
+    padding: 8px 0;
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+}
+
+.profile-dropdown.show {
+    display: flex;
+    animation: dropdownSlide 0.2s ease forwards;
+}
+
+@keyframes dropdownSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-header {
+    padding: 10px 16px 8px;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.dropdown-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.dropdown-subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.dropdown-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.dropdown-link:hover {
+    background: rgba(34, 197, 94, 0.08);
+    color: var(--brand-leaf-bright);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: var(--card-border);
+    margin: 6px 0;
+}
+
+/* ============================================================================
+   2. HERO BANNER AREA (VEGETABLE BASKET & TODAY CROP HARVEST CHART)
+   ============================================================================ */
+.hero-section {
+    position: relative;
+    width: 100%;
+    background-color: var(--hero-bg);
+    background: radial-gradient(circle at 15% 30%, rgba(185, 230, 185, 0.35) 0%, transparent 60%),
+        radial-gradient(circle at 85% 70%, rgba(200, 235, 255, 0.3) 0%, transparent 60%),
+        var(--hero-bg);
+    margin-top: -112px;
+    padding: 128px 36px 40px;
+    overflow: hidden;
+    transition: background-color 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        margin-top: -94px;
+        padding-top: 108px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
+.hero-doodle-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.12;
+    background-image: radial-gradient(#2d6124 1.2px, transparent 1.2px);
+    background-size: 32px 32px;
+}
+
+.farm-dashboard-root.dark-theme .hero-doodle-bg {
+    opacity: 0.06;
+}
+
+.hero-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: center;
+    position: relative;
+    z-index: 5;
+}
+
+@media (min-width: 1024px) {
+    .hero-container {
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+    }
+}
+
+/* Left Hero: Fresh Produce Basket Showcase */
+.basket-showcase-box {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.basket-img-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.basket-main-img {
+    width: 100%;
+    max-height: 290px;
+    object-fit: contain;
+    filter: drop-shadow(0 14px 28px rgba(18, 48, 16, 0.22));
+    position: relative;
+    z-index: 2;
+    transition: transform 0.4s ease;
+}
+
+.basket-main-img:hover {
+    transform: scale(1.03) translateY(-4px);
+}
+
+/* Right Hero: Crop Harvest & Yield Chart Card */
+.chart-card {
+    background: var(--surface-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: 24px 28px;
+    border: 1px solid var(--card-border);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.chart-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chart-title {
+    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.2px;
+}
+
+.live-pill {
+    background: rgba(34, 197, 94, 0.14);
+    color: #16a34a;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.farm-dashboard-root.dark-theme .live-pill {
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.16);
+}
+
+.live-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    animation: chartPulse 2s infinite;
+}
+
+@keyframes chartPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    }
+}
+
+.chart-metric-toggle {
+    display: flex;
+    background: rgba(44, 79, 36, 0.08);
+    border-radius: var(--radius-pill);
+    padding: 3px;
+    gap: 2px;
+}
+
+.farm-dashboard-root.dark-theme .chart-metric-toggle {
+    background: rgba(74, 222, 128, 0.1);
+}
+
+.chart-toggle-btn {
+    border: none;
+    background: transparent;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    padding: 5px 14px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.25s ease;
+}
+
+.chart-toggle-btn:hover {
+    color: var(--text-primary);
+}
+
+.chart-toggle-btn.active {
+    background: #ffffff;
+    color: var(--brand-dark-green);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.farm-dashboard-root.dark-theme .chart-toggle-btn.active {
+    background: #22c55e;
+    color: #0b1a0e;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+}
+
+/* Chart Canvas with Vertical Bars */
+.chart-content {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    height: 190px;
+    position: relative;
+    padding-left: 36px;
+    padding-bottom: 24px;
+}
+
+.chart-empty-state {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    color: var(--text-muted);
+}
+
+/* Y-Axis scale marks */
+.chart-y-axis {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 24px;
+    width: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    font-size: 11px;
+    font-weight: 700;
+    color: #8da490;
+    user-select: none;
+}
+
+/* Horizontal Guidelines */
+.chart-guidelines {
+    position: absolute;
+    left: 36px;
+    right: 0;
+    top: 0;
+    bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.chart-grid-line {
+    width: 100%;
+    height: 1px;
+    background: rgba(44, 79, 36, 0.08);
+}
+
+.farm-dashboard-root.dark-theme .chart-grid-line {
+    background: rgba(74, 222, 128, 0.1);
+}
+
+/* Bar Columns Grid */
+.chart-bars-wrap {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    gap: 8px;
+}
+
+.chart-bar-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    flex: 1;
+    position: relative;
+}
+
+.chart-bar-pillar {
+    width: 100%;
+    max-width: 28px;
+    border-radius: 6px 6px 0 0;
+    transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    cursor: pointer;
+}
+
+/* Bar Colors */
+.bar-color-1 { background-color: #9cbbf2; }
+.bar-color-2 { background-color: #4ce0d6; }
+.bar-color-3 { background-color: #171d18; }
+.bar-color-4 { background-color: #18b7fd; }
+.bar-color-5 { background-color: #c49df5; }
+.bar-color-6 { background-color: #63e27c; }
+
+.farm-dashboard-root.dark-theme .bar-color-3 {
+    background-color: #3b503e;
+}
+
+/* Bar X-axis Labels */
+.chart-x-label {
+    position: absolute;
+    bottom: -22px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* Tooltip on Hover */
+.chart-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    background: #142813;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 6px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    z-index: 20;
+}
+
+.chart-bar-col:hover .chart-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ============================================================================
+   3. KPI STATS ROW (4 FARM OPERATION CARDS)
+   ============================================================================ */
+.stats-section {
+    position: relative;
+    max-width: 1400px;
+    margin: -10px auto 30px;
+    padding: 0 36px;
+    z-index: 20;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+@media (min-width: 900px) {
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+}
+
+.stat-card {
+    background: var(--stat-card-bg);
+    border: 1px solid var(--stat-card-border);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    box-shadow: var(--shadow-subtle);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 24px rgba(22, 42, 66, 0.12);
+    border-color: rgba(99, 150, 240, 0.8);
+}
+
+.stat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.stat-label {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--stat-card-text-title);
+    letter-spacing: -0.1px;
+}
+
+.stat-trend {
+    font-size: 11px;
+    font-weight: 800;
+    color: #1fac3e;
+    background: rgba(31, 172, 62, 0.12);
+    padding: 2px 7px;
+    border-radius: var(--radius-pill);
+}
+
+.farm-dashboard-root.dark-theme .stat-trend {
+    background: rgba(74, 222, 128, 0.18);
+    color: #4ade80;
+}
+
+.stat-value {
+    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--stat-card-text-value);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+}
+
+/* ============================================================================
+   4. FARM OPERATIONAL ACTION GRID (4 ACTION TILES)
+   ============================================================================ */
+.action-grid-section {
+    position: relative;
+    max-width: 1400px;
+    margin: 20px auto 40px;
+    padding: 10px 36px 30px;
+}
+
+.watercolor-accent {
+    position: absolute;
+    top: -20px;
+    left: 20px;
+    width: 280px;
+    height: 160px;
+    background: radial-gradient(ellipse at center, rgba(74, 222, 128, 0.14) 0%, rgba(255, 255, 255, 0) 70%);
+    filter: blur(25px);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.action-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px 16px;
+    position: relative;
+    z-index: 5;
+}
+
+@media (min-width: 640px) {
+    .action-row {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 28px 20px;
+    }
+}
+
+.action-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    padding: 12px 14px 18px;
+    border-radius: var(--radius-lg);
+    background: var(--surface-card);
+    border: 1px solid var(--card-border);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    box-shadow: var(--shadow-subtle);
+}
+
+.action-item:hover {
+    transform: translateY(-4px) scale(1.03);
+    border-color: var(--brand-leaf-bright);
+    box-shadow: var(--shadow-card);
+}
+
+/* Circular Icon Badge */
+.action-icon-circle {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--action-circle-bg);
+    border: 1.5px solid var(--action-circle-border);
+    color: var(--action-circle-icon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+}
+
+.action-item:hover .action-icon-circle {
+    transform: scale(1.08);
+    box-shadow: 0 8px 22px rgba(34, 197, 94, 0.28);
+    border-color: #22c55e;
+    background: #e8f9ec;
+}
+
+.farm-dashboard-root.dark-theme .action-item:hover .action-icon-circle {
+    background: #193320;
+    border-color: #4ade80;
+    box-shadow: 0 8px 22px rgba(74, 222, 128, 0.25);
+}
+
+.action-icon-circle svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
+}
+
+.action-title {
+    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.2px;
+    transition: color 0.3s ease;
+}
+
+.action-item:hover .action-title {
+    color: var(--brand-leaf);
+}
+
+.farm-dashboard-root.dark-theme .action-item:hover .action-title {
+    color: #4ade80;
+}
+
+.action-desc {
+    font-size: 11.5px;
+    color: var(--text-light-sub);
+    font-weight: 500;
+    max-width: 170px;
+    line-height: 1.35;
+}
+
+/* ============================================================================
+   5. RECENT HARVEST DISPATCHES & FIELD LOGS
+   ============================================================================ */
+.harvest-log-section {
+    max-width: 1400px;
+    margin: 0 auto 50px;
+    padding: 0 36px;
+    position: relative;
+    z-index: 5;
+}
+
+.harvest-log-card {
+    background: var(--surface-card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+}
+
+.log-card-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: var(--surface-card-subtle);
+}
+
+.log-card-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.log-title {
+    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.log-count-badge {
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    background: rgba(34, 197, 94, 0.14);
+    color: #16a34a;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.log-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.log-search-input {
+    padding: 7px 14px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--card-border);
+    background: var(--surface-card);
+    font-size: 12px;
+    color: var(--text-primary);
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.log-search-input:focus {
+    border-color: var(--brand-leaf-bright);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+}
+
+.add-harvest-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #ffffff;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+    transition: all 0.2s ease;
+}
+
+.add-harvest-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
+}
+
+.log-table-wrapper {
+    overflow-x: auto;
+}
+
+.log-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    text-align: left;
+}
+
+.log-table th {
+    padding: 12px 18px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    background: var(--surface-card-subtle);
+    border-bottom: 1px solid var(--card-border);
+}
+
+.log-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--card-border);
+    color: var(--text-secondary);
+}
+
+.log-table tr:hover {
+    background: rgba(34, 197, 94, 0.04);
+}
+
+.crop-name-cell {
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.crop-emoji {
+    font-size: 16px;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+    font-size: 10.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.status-pill.harvested {
+    background: rgba(34, 197, 94, 0.12);
+    color: #16a34a;
+    border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.status-pill.dispatched {
+    background: rgba(56, 189, 248, 0.12);
+    color: #0284c7;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+.status-pill.stored {
+    background: rgba(245, 158, 11, 0.12);
+    color: #d97706;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+/* ============================================================================
+   6. INTERACTIVE MODAL (ADD TODAY HARVEST FORM)
+   ============================================================================ */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-dialog {
+    background: var(--surface-card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 520px;
+    box-shadow: var(--shadow-elevated);
+    overflow: hidden;
+    animation: modalSlide 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalSlide {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface-card-subtle);
+}
+
+.modal-title {
+    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.modal-close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--card-border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+
+.modal-close-btn:hover {
+    color: var(--text-primary);
+    background: var(--surface-card);
+}
+
+.modal-body {
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    background: var(--surface-card-subtle);
+}
+
+.modal-cancel-btn {
+    padding: 9px 18px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--card-border);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.modal-cancel-btn:hover {
+    color: var(--text-primary);
+    background: var(--surface-card);
+}
+
+.modal-submit-btn {
+    padding: 9px 20px;
+    border-radius: var(--radius-md);
+    border: none;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #ffffff;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(34, 197, 94, 0.35);
+    transition: all 0.2s ease;
+}
+
+.modal-submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(34, 197, 94, 0.45);
+}
+
+/* ============================================================================
+   7. INTERACTIVE ACTION TOAST NOTIFICATION
+   ============================================================================ */
+.action-toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #142813;
+    color: #ffffff;
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-left: 4px solid #22c55e;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 1000;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+}
+
+.action-toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* ============================================================================
+   8. DARK FOOTER (MATCHING BASE DESIGN)
+   ============================================================================ */
+.footer-wrapper {
+    position: relative;
+    background: #0d160e;
+    color: #d1e2d4;
+    padding: 50px 36px 30px;
+    overflow: hidden;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 60px;
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+@media (min-width: 768px) {
+    .footer-content {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 440px;
+}
+
+.footer-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.footer-logo-text {
+    font-family: 'Noto Sans Sinhala', 'Abhaya Libre', 'Plus Jakarta Sans', serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.footer-logo-text span {
+    color: #22c55e;
+    margin-left: 4px;
+}
+
+.footer-tagline {
+    font-size: 13px;
+    color: #8da490;
+    line-height: 1.5;
+}
+
+.footer-links-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer-link-item {
+    font-size: 13px;
+    font-weight: 600;
+    color: #a4bea7;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer-link-item:hover {
+    color: #22c55e;
+}
+
+.footer-bottom {
+    max-width: 1400px;
+    margin: 30px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    font-size: 12px;
+    color: #6d8570;
+}
+
+/* ============================================================================
+   9. RESPONSIVE BREAKPOINTS
+   ============================================================================ */
+@media (max-width: 640px) {
+    .top-nav {
+        padding: 12px 16px;
+    }
+
+    .hero-section {
+        padding: 98px 16px 30px;
+    }
+
+    .stats-section,
+    .action-grid-section,
+    .harvest-log-section {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .action-row {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-content {
+        padding-left: 30px;
+        gap: 8px;
+    }
+
+    .user-profile-name {
+        display: none;
+    }
+
+    .footer-wrapper {
+        padding: 40px 16px 24px;
+    }
+
+    .footer-links-group {
+        gap: 14px;
+    }
+}
+
