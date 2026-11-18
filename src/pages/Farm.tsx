@@ -936,7 +936,7 @@ export const FarmRegistration: FC = () => {
             <span className="logo-text">
               රන් <span>පොළොව</span>
             </span>
-            <span className="module-tag">Farm Registry</span>
+            
           </a>
 
           <div className="nav-right-actions">
@@ -951,9 +951,7 @@ export const FarmRegistration: FC = () => {
 
             <UserProfileMenu />
 
-            <a href="/farmdashboard" className="nav-back-link">
-              <span>&larr; Farm Dashboard</span>
-            </a>
+          
           </div>
         </div>
       </header>
