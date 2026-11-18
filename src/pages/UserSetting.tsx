@@ -12,7 +12,6 @@ import {
   Mail,
   Phone,
   ShieldCheck,
-  ArrowLeft,
   KeyRound,
   Check,
   X
@@ -21,8 +20,6 @@ import api from '../service/api';
 import logoImg from '../assets/logo.jpg';
 import UserProfileMenu from '../components/UserProfileMenu';
 import '../UserSetting.css';
-
-
 
 type NavIconProps = React.SVGProps<SVGSVGElement> & { size?: number | string };
 
@@ -226,7 +223,7 @@ export const UserSettings: FC = () => {
     setTimeout(() => setToast(null), 3500);
   };
 
-  // Load Current User Data 
+  // Load Current User Data
   useEffect(() => {
     const loadUser = async () => {
       setIsLoadingProfile(true);
@@ -268,23 +265,11 @@ export const UserSettings: FC = () => {
     loadUser();
   }, []);
 
-  const getDashboardPath = (role: string): string => {
-    const r = String(role || '').toUpperCase();
-    if (r === 'MANAGER' || r === 'OWNER' || r === 'ADMIN') return '/managerdashboard';
-    if (r === 'FARM' || r === 'FARMER') return '/farmdashboard';
-    if (r === 'STORE' || r === 'STORE OWNER') return '/storedashboard';
-    return '/user';
-  };
-
-  // Handle Personal Details Save
+  // Handle Personal Details Save (name and telephoneNumber only; email is read-only)
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!profile.name.trim()) {
       showToast('Full name is required.', 'error');
-      return;
-    }
-    if (!profile.email.trim()) {
-      showToast('Email address is required.', 'error');
       return;
     }
     if (!profile.telephoneNumber.trim()) {
@@ -296,7 +281,6 @@ export const UserSettings: FC = () => {
     try {
       const payload = {
         name: profile.name.trim(),
-        email: profile.email.trim().toLowerCase(),
         telephoneNumber: profile.telephoneNumber.trim()
       };
 
@@ -378,7 +362,6 @@ export const UserSettings: FC = () => {
 
   return (
     <div className={`user-settings-root ${isDark ? 'dark-theme' : ''}`}>
-      
       <header className="header-wrapper">
         <div className="header-bg-svg-wrap">
           <svg viewBox="0 0 1440 120" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -423,18 +406,13 @@ export const UserSettings: FC = () => {
             </button>
 
             <UserProfileMenu />
-
-          
           </div>
         </div>
       </header>
 
-      
       <section className="page-hero-banner">
         <div className="hero-doodle-bg" />
         <div className="hero-content-inner">
-          
-
           <div className="hero-header-row">
             <div>
               <h1 className="hero-page-title">
@@ -445,14 +423,11 @@ export const UserSettings: FC = () => {
                 Administer your certified stakeholder contact channels, telephone hotline credentials, and manage multi-tier cryptographic password authentication.
               </p>
             </div>
-          
           </div>
         </div>
       </section>
 
-      
       <main className="settings-main-container">
-     
         <div className="stats-grid">
           <div className="stat-card">
             <div className="stat-header">
@@ -499,9 +474,7 @@ export const UserSettings: FC = () => {
           </div>
         </div>
 
-        
         <div className="settings-grid-layout">
-      
           <div className="settings-card">
             <div className="settings-card-header">
               <div className="settings-icon-badge green">
@@ -545,13 +518,13 @@ export const UserSettings: FC = () => {
                   </div>
                 </div>
 
-                {/* Email Address */}
+                {/* Email Address (Read-only, non-editable like Role) */}
                 <div className="settings-field-group">
                   <label className="settings-label">
                     <span className="settings-label-left">
                       <span>Email Address</span>
-                      <span className="settings-req-star">*</span>
                     </span>
+                    <span className="settings-badge-readonly">System Verified</span>
                   </label>
                   <div className="settings-input-wrap">
                     <span className="settings-input-prefix-icon">
@@ -559,11 +532,10 @@ export const UserSettings: FC = () => {
                     </span>
                     <input
                       type="email"
-                      required
+                      readOnly
+                      disabled
                       value={profile.email}
-                      onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-                      placeholder="e.g. kasun@ranpolowa.lk"
-                      className="settings-text-input"
+                      className="settings-text-input readonly"
                     />
                   </div>
                 </div>
@@ -591,7 +563,7 @@ export const UserSettings: FC = () => {
                   </div>
                 </div>
 
-             
+                {/* Ecosystem Stakeholder Role */}
                 <div className="settings-field-group">
                   <label className="settings-label">
                     <span className="settings-label-left">
@@ -634,7 +606,6 @@ export const UserSettings: FC = () => {
             )}
           </div>
 
-       
           <div className="settings-card">
             <div className="settings-card-header">
               <div className="settings-icon-badge cyan">
@@ -786,7 +757,6 @@ export const UserSettings: FC = () => {
         </div>
       </main>
 
-
       <div className="rp-floating-dock" role="navigation" aria-label="Manager Quick Navigation">
         <div className="rp-floating-pill">
           {[
@@ -821,7 +791,6 @@ export const UserSettings: FC = () => {
         </div>
       </div>
 
-     
       {toast && (
         <div className={`settings-toast ${toast.type}`}>
           {toast.type === 'error' ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
@@ -829,7 +798,6 @@ export const UserSettings: FC = () => {
         </div>
       )}
 
-     
       <footer className="app-site-footer">
         <div className="footer-inner-content">
           <div className="footer-logo-block">
