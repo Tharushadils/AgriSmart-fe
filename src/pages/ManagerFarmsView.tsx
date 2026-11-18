@@ -4,7 +4,6 @@ import logoImg from '../assets/logo.jpg';
 import UserProfileMenu from '../components/UserProfileMenu';
 import '../ManagerFarmsView.css';
 
-
 export type IconProps = SVGProps<SVGSVGElement> & { size?: number | string };
 
 export const BaseIcon: FC<IconProps & { children: React.ReactNode }> = ({
@@ -192,7 +191,7 @@ export const PriceTagTrendIcon: FC<IconProps> = (p) => (
 export const PrecisionGearsIcon: FC<IconProps> = (p) => (
   <BaseIcon {...p}>
     <circle cx="12" cy="12" r="3" />
-    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
   </BaseIcon>
 );
 
@@ -268,7 +267,6 @@ export const SettingsGearIcon: FC<IconProps> = (p) => (
   </BaseIcon>
 );
 
-
 export interface CollectionCenterOption {
   _id: string;
   centerId?: string;
@@ -280,13 +278,13 @@ export interface CollectionCenterOption {
 export interface FarmDetailRecord {
   _id: string;
   farmId?: string;
-  farmName?: string;
   district?: string;
   province?: string;
   address?: string;
   latitude?: number;
   longitude?: number;
   farmSizeAcres?: number;
+  isActive?: boolean;
   userId?: {
     _id: string;
     fullName?: string;
@@ -296,6 +294,7 @@ export interface FarmDetailRecord {
     telephoneNumber?: string;
     isApproved?: boolean;
     approve?: boolean;
+    isActive?: boolean;
   } | null;
   collectionCenterId?: {
     _id: string;
@@ -309,12 +308,12 @@ export interface FarmDetailRecord {
 }
 
 interface FarmEditDraft {
-  farmName: string;
   address: string;
   district: string;
   collectionCenterId: string;
   latitude: string;
   longitude: string;
+  isActive: boolean;
 }
 
 const SRI_LANKA_DISTRICTS = [
@@ -404,14 +403,21 @@ export const ManagerFarmsView: FC = () => {
 
   // Start Editing a Specific Farm Row
   const handleStartEdit = (farm: FarmDetailRecord) => {
+    const currentlyActive =
+      farm.isActive !== undefined
+        ? Boolean(farm.isActive)
+        : farm.userId?.isActive !== undefined
+        ? Boolean(farm.userId.isActive)
+        : true;
+
     setEditingRowId(farm._id);
     setEditDraft({
-      farmName: farm.farmName || '',
       address: farm.address || '',
       district: (farm.district || '').toUpperCase(),
       collectionCenterId: farm.collectionCenterId?._id || '',
       latitude: farm.latitude !== undefined ? String(farm.latitude) : '',
-      longitude: farm.longitude !== undefined ? String(farm.longitude) : ''
+      longitude: farm.longitude !== undefined ? String(farm.longitude) : '',
+      isActive: currentlyActive
     });
   };
 
@@ -421,7 +427,7 @@ export const ManagerFarmsView: FC = () => {
     setEditDraft(null);
   };
 
-  // Save Edited Farm Row to Backend
+  // Save Edited Farm Row to Backend (including Soft Delete isActive status)
   const handleSaveRowEdit = async (farm: FarmDetailRecord) => {
     if (!editDraft) return;
 
@@ -434,10 +440,10 @@ export const ManagerFarmsView: FC = () => {
     }
 
     const payload: Record<string, any> = {
-      farmName: editDraft.farmName.trim(),
       address: editDraft.address.trim(),
       district: editDraft.district.trim().toUpperCase(),
       collectionCenterId: editDraft.collectionCenterId || null,
+      isActive: editDraft.isActive,
       ...(parsedLat !== undefined ? { latitude: parsedLat } : {}),
       ...(parsedLng !== undefined ? { longitude: parsedLng } : {})
     };
@@ -466,6 +472,7 @@ export const ManagerFarmsView: FC = () => {
                 ...item,
                 ...payload,
                 ...(updatedFromServer && typeof updatedFromServer === 'object' ? updatedFromServer : {}),
+                isActive: editDraft.isActive,
                 userId: item.userId,
                 collectionCenterId: editDraft.collectionCenterId ? selectedCenterObj : null
               }
@@ -475,7 +482,11 @@ export const ManagerFarmsView: FC = () => {
 
       setEditingRowId(null);
       setEditDraft(null);
-      showToast(`Farm ${farm.farmId || farm.farmName || 'record'} updated successfully.`);
+      showToast(
+        editDraft.isActive
+          ? `Farm ${farm.farmId || farm._id.slice(-6).toUpperCase()} updated successfully.`
+          : `Farm ${farm.farmId || farm._id.slice(-6).toUpperCase()} deactivated (Farmer Deleted).`
+      );
     } catch (err: any) {
       showToast(err.response?.data?.message || 'Failed to update farm details.');
     } finally {
@@ -515,7 +526,6 @@ export const ManagerFarmsView: FC = () => {
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const code = (f.farmId || '').toLowerCase();
-        const fName = (f.farmName || '').toLowerCase();
         const farmer = (f.userId?.fullName || f.userId?.name || '').toLowerCase();
         const email = (f.userId?.email || '').toLowerCase();
         const address = (f.address || '').toLowerCase();
@@ -528,7 +538,6 @@ export const ManagerFarmsView: FC = () => {
 
         if (
           !code.includes(q) &&
-          !fName.includes(q) &&
           !farmer.includes(q) &&
           !email.includes(q) &&
           !address.includes(q) &&
@@ -542,7 +551,6 @@ export const ManagerFarmsView: FC = () => {
     });
   }, [farms, districtFilter, centerFilter, searchQuery]);
 
- 
   const stats = useMemo(() => {
     const totalFarms = filteredFarms.length;
     const linkedToCenter = filteredFarms.filter((f) => Boolean(f.collectionCenterId?._id)).length;
@@ -571,7 +579,6 @@ export const ManagerFarmsView: FC = () => {
 
   return (
     <div className={`manager-farms-root ${isDark ? 'dark-theme' : ''}`}>
- 
       <header className="header-wrapper">
         <div className="header-bg-svg-wrap">
           <svg viewBox="0 0 1440 120" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -614,13 +621,10 @@ export const ManagerFarmsView: FC = () => {
             </button>
 
             <UserProfileMenu />
-
-           
           </div>
         </div>
       </header>
 
-   
       <section className="page-hero-banner">
         <div className="hero-doodle-bg" />
         <div className="hero-content-inner">
@@ -631,15 +635,13 @@ export const ManagerFarmsView: FC = () => {
                 <span>Registered Farms Directory</span>
               </h1>
               <p className="hero-page-desc">
-                Inspect and update registered farms, districts, assigned collection hubs, and GPS geo-coordinates row by row.
+                Inspect and update registered farms, addresses, districts, assigned collection hubs, and GPS geo-coordinates row by row.
               </p>
             </div>
-           
           </div>
         </div>
       </section>
 
-     
       <main className="farms-main-container">
         <div className="stats-grid">
           <div className="stat-card">
@@ -694,7 +696,7 @@ export const ManagerFarmsView: FC = () => {
               <SearchIcon size={16} className="search-icon" />
               <input
                 type="text"
-                placeholder="Search Farm ID, Farm Name, Farmer, District, Address..."
+                placeholder="Search Farm ID, Farmer, District, Address..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="search-input"
@@ -786,12 +788,12 @@ export const ManagerFarmsView: FC = () => {
                 <thead>
                   <tr>
                     <th>Farm ID</th>
-                    <th>Farm Name &amp; Address</th>
+                    <th>Farm Address</th>
                     <th>Farmer Owner</th>
                     <th>District</th>
                     <th>Assigned Hub</th>
                     <th>GPS Location</th>
-                    <th>Account Status</th>
+                    <th>Status</th>
                     <th style={{ textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
@@ -813,55 +815,42 @@ export const ManagerFarmsView: FC = () => {
                       typeof farm.latitude === 'number' &&
                       typeof farm.longitude === 'number' &&
                       (farm.latitude !== 0 || farm.longitude !== 0);
-                    const isApproved =
-                      farm.userId?.approve !== false && farm.userId?.isApproved !== false;
+                    const isFarmActive =
+                      farm.isActive !== undefined
+                        ? Boolean(farm.isActive)
+                        : farm.userId?.approve !== false && farm.userId?.isApproved !== false;
 
                     return (
                       <tr
                         key={farm._id}
-                        style={
-                          isEditing
+                        style={{
+                          ...(isEditing
                             ? { background: isDark ? 'rgba(34, 197, 94, 0.08)' : 'rgba(34, 197, 94, 0.06)' }
-                            : undefined
-                        }
+                            : {}),
+                          ...(!isFarmActive && !isEditing ? { opacity: 0.65 } : {})
+                        }}
                       >
                         {/* Farm ID */}
                         <td className="farm-code-cell">
                           {farm.farmId || farm._id.slice(-6).toUpperCase()}
                         </td>
 
-                        {/* Farm Name & Address */}
+                        {/* Farm Address Only */}
                         <td>
                           {isEditing ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', minWidth: '185px' }}>
-                              <input
-                                type="text"
-                                value={editDraft.farmName}
-                                onChange={(e) =>
-                                  setEditDraft({ ...editDraft, farmName: e.target.value })
-                                }
-                                placeholder="Farm Name"
-                                style={{ ...inlineInputStyle, width: '100%' }}
-                              />
-                              <input
-                                type="text"
-                                value={editDraft.address}
-                                onChange={(e) =>
-                                  setEditDraft({ ...editDraft, address: e.target.value })
-                                }
-                                placeholder="Street Address"
-                                style={{ ...inlineInputStyle, width: '100%', fontSize: '11px', fontWeight: 500 }}
-                              />
-                            </div>
+                            <input
+                              type="text"
+                              value={editDraft.address}
+                              onChange={(e) =>
+                                setEditDraft({ ...editDraft, address: e.target.value })
+                              }
+                              placeholder="Street Address"
+                              style={{ ...inlineInputStyle, width: '100%', minWidth: '185px' }}
+                            />
                           ) : (
-                            <>
-                              <div className="farm-name-bold">
-                                {farm.farmName || `${farmerName}'s Farm`}
-                              </div>
-                              <div className="farm-address-sub">
-                                {farm.address || 'No street address provided'}
-                              </div>
-                            </>
+                            <div className="farm-name-bold">
+                              {farm.address || 'No street address provided'}
+                            </div>
                           )}
                         </td>
 
@@ -974,12 +963,32 @@ export const ManagerFarmsView: FC = () => {
                           )}
                         </td>
 
-                        {/* Account Status */}
+                        {/* Status (Editable Soft Delete Toggle in Edit Mode) */}
                         <td>
-                          <span className={`status-pill ${isApproved ? 'active' : 'pending'}`}>
-                            {isApproved ? <CheckCircle2Icon size={12} /> : <ClockIcon size={12} />}
-                            <span>{isApproved ? 'Active' : 'Pending'}</span>
-                          </span>
+                          {isEditing ? (
+                            <select
+                              value={editDraft.isActive ? 'ACTIVE' : 'INACTIVE'}
+                              onChange={(e) =>
+                                setEditDraft({ ...editDraft, isActive: e.target.value === 'ACTIVE' })
+                              }
+                              style={{
+                                ...inlineInputStyle,
+                                width: '122px',
+                                borderColor: editDraft.isActive
+                                  ? 'rgba(34, 197, 94, 0.6)'
+                                  : 'rgba(244, 63, 94, 0.6)',
+                                color: editDraft.isActive ? '#16a34a' : '#e11d48'
+                              }}
+                            >
+                              <option value="ACTIVE">Active</option>
+                              <option value="INACTIVE">Deactivated</option>
+                            </select>
+                          ) : (
+                            <span className={`status-pill ${isFarmActive ? 'active' : 'pending'}`}>
+                              {isFarmActive ? <CheckCircle2Icon size={12} /> : <XIcon size={12} />}
+                              <span>{isFarmActive ? 'Active' : 'Deactivated'}</span>
+                            </span>
+                          )}
                         </td>
 
                         {/* Edit / Save / Cancel */}
@@ -1066,7 +1075,6 @@ export const ManagerFarmsView: FC = () => {
         </div>
       </main>
 
-     
       <div className="rp-floating-dock" role="navigation" aria-label="Manager Quick Navigation">
         <div className="rp-floating-pill">
           {[
@@ -1101,7 +1109,6 @@ export const ManagerFarmsView: FC = () => {
         </div>
       </div>
 
-     
       {toastMessage && (
         <div
           style={{
