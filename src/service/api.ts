@@ -9,7 +9,7 @@ const api = axios.create({
 });
 
 // Endpoints that do NOT need a token
-const PUBLIC_ENDPOINTS = ["/auth/login", "/auth/register", "/auth/refresh"];
+const PUBLIC_ENDPOINTS = ["/auth/login", "/auth/register", "/auth/refresh","/district-pricing/released","/harvest-prices/released"];
 
 //  Runs before every API call goes out
 api.interceptors.request.use((config) => {
