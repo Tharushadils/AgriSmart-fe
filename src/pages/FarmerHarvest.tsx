@@ -3,6 +3,7 @@ import React, {
   useEffect,
   useRef,
   useMemo,
+  useCallback,
   type FC,
   type SVGProps,
   type ChangeEvent,
@@ -325,8 +326,9 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
 
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
+  const cropDropdownRef = useRef<HTMLDivElement | null>(null);
 
-  const [userState, setUserState] = useState(currentUser);
+  const [userState, setUserState] = useState<any>(currentUser);
 
   useEffect(() => {
     if (currentUser?.name) {
@@ -354,6 +356,9 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
       if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
         setIsProfileOpen(false);
       }
+      if (cropDropdownRef.current && !cropDropdownRef.current.contains(e.target as Node)) {
+        setShowCropDropdown(false);
+      }
     };
     document.addEventListener('mousedown', handleOutsideClick);
     return () => document.removeEventListener('mousedown', handleOutsideClick);
@@ -364,7 +369,7 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
   const [showCropDropdown, setShowCropDropdown] = useState<boolean>(false);
   const [selectedProduct, setSelectedProduct] = useState<ProduceCatalogItem | null>(null);
 
-  // Delivery date: Deadline check 
+  // Delivery date: Deadline check
   const minDeliveryDate = useMemo(() => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -380,11 +385,13 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [searchRosterQuery, setSearchRosterQuery] = useState<string>('');
   const [toast, setToast] = useState<ToastMessage | null>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const triggerToast = (msg: string, type: ToastMessage['type'] = 'success'): void => {
+  const triggerToast = useCallback((msg: string, type: ToastMessage['type'] = 'success'): void => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToast({ msg, type });
-    setTimeout(() => setToast(null), 3500);
-  };
+    toastTimerRef.current = setTimeout(() => setToast(null), 3500);
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -412,7 +419,7 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
     };
 
     fetchProducts();
-  }, []);
+  }, [triggerToast]);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -420,6 +427,40 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
   const [hasMultipleCameras, setHasMultipleCameras] = useState<boolean>(false);
+
+  // --- AI Auto-Detection State & Refs ---
+  const [isAiScanning, setIsAiScanning] = useState<boolean>(false);
+  const [aiDetectedLabel, setAiDetectedLabel] = useState<string | null>(null);
+  const [scanHint, setScanHint] = useState<string | null>(null);
+
+  const isRequestInFlightRef = useRef<boolean>(false);
+  const scanSessionRef = useRef<number>(0);
+  const harvestItemsRef = useRef<HarvestDraftItem[]>(harvestItems);
+  const harvestDateRef = useRef<string>(harvestDate);
+  const produceCatalogRef = useRef<ProduceCatalogItem[]>(produceCatalog);
+
+  useEffect(() => {
+    harvestItemsRef.current = harvestItems;
+  }, [harvestItems]);
+
+  useEffect(() => {
+    harvestDateRef.current = harvestDate;
+  }, [harvestDate]);
+
+  useEffect(() => {
+    produceCatalogRef.current = produceCatalog;
+  }, [produceCatalog]);
+
+  // Function to cleanly restart AI scanning for the next product
+  const resumeAiScanningForNextItem = useCallback((customHint?: string) => {
+    scanSessionRef.current += 1;
+    isRequestInFlightRef.current = false;
+    setAiDetectedLabel(null);
+    setScanHint(customHint || null);
+    if (isCameraActive && !isCommitted) {
+      setIsAiScanning(true);
+    }
+  }, [isCameraActive, isCommitted]);
 
   useEffect(() => {
     async function checkDevices(): Promise<void> {
@@ -439,6 +480,8 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
   }, []);
 
   const stopCamera = (): void => {
+    scanSessionRef.current += 1;
+    isRequestInFlightRef.current = false;
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
@@ -447,6 +490,9 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
       videoRef.current.srcObject = null;
     }
     setIsCameraActive(false);
+    setIsAiScanning(false);
+    setAiDetectedLabel(null);
+    setScanHint(null);
   };
 
   const startCamera = async (targetFacing: 'environment' | 'user' = facingMode): Promise<void> => {
@@ -471,6 +517,9 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
       }
       setIsCameraActive(true);
       setFacingMode(targetFacing);
+      setAiDetectedLabel(null);
+      setScanHint(null);
+      setIsAiScanning(true);
     } catch {
       setCameraError('Camera permission denied or hardware unavailable.');
       setIsCameraActive(false);
@@ -489,6 +538,96 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
 
   useEffect(() => () => stopCamera(), []);
 
+  // --- AI Frame Capture & Auto-Select Logic ---
+  const captureAndDetectProduce = useCallback(async (): Promise<void> => {
+    if (!videoRef.current || !isCameraActive || !isAiScanning || isRequestInFlightRef.current || isCommitted) {
+      return;
+    }
+
+    if (videoRef.current.readyState < 2) return;
+
+    const currentSession = scanSessionRef.current;
+    isRequestInFlightRef.current = true;
+
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 480;
+      canvas.height = 360;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+      const imageBase64 = canvas.toDataURL('image/jpeg', 0.75);
+
+      const res = await api.post('/ai/detect-product', { imageBase64 });
+
+      // Ignore stale responses if the user already clicked "Add to Batch Roster" or "Scan Again"
+      if (currentSession !== scanSessionRef.current) {
+        return;
+      }
+
+      if (res.data?.detected && res.data?.product) {
+        const detected = res.data.product;
+        const currentCatalog = produceCatalogRef.current;
+
+        const matchedFromCatalog = currentCatalog.find(
+          (p) =>
+            p.id === String(detected._id) ||
+            p.name.trim().toLowerCase() === detected.name?.trim().toLowerCase()
+        );
+
+        const finalItem: ProduceCatalogItem = matchedFromCatalog || {
+          id: String(detected._id),
+          name: detected.name,
+          unit: detected.unit || 'kg'
+        };
+
+        // Check if this product is already in the Batch Roster for the selected delivery date
+        const alreadyInRoster = harvestItemsRef.current.some(
+          (item) => item.productId === finalItem.id && item.date === harvestDateRef.current
+        );
+
+        if (alreadyInRoster) {
+          // Do NOT stop scanning; prompt the user to show the next new produce item
+          setScanHint(`"${finalItem.name}" is already in batch. Point camera at next produce...`);
+          return;
+        }
+
+        setScanHint(null);
+        setSelectedProduct(finalItem);
+        setCropSearchQuery(finalItem.name);
+        setShowCropDropdown(false);
+        setAiDetectedLabel(finalItem.name);
+        setIsAiScanning(false);
+        triggerToast(`AI Detected: ${finalItem.name} selected automatically!`, 'success');
+      }
+    } catch (err) {
+      console.error('AI Product Scan Error:', err);
+    } finally {
+      if (currentSession === scanSessionRef.current) {
+        isRequestInFlightRef.current = false;
+      }
+    }
+  }, [isCameraActive, isAiScanning, isCommitted, triggerToast]);
+
+  useEffect(() => {
+    if (!isCameraActive || !isAiScanning || isCommitted) return;
+
+    // Trigger an immediate scan after a short stabilization delay, then continue every 2.2 seconds
+    const initialTimer = setTimeout(() => {
+      captureAndDetectProduce();
+    }, 500);
+
+    const intervalId = setInterval(() => {
+      captureAndDetectProduce();
+    }, 2200);
+
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(intervalId);
+    };
+  }, [isCameraActive, isAiScanning, isCommitted, captureAndDetectProduce]);
+
   const filteredCatalog = useMemo(() => {
     if (!cropSearchQuery.trim()) return produceCatalog;
     const q = cropSearchQuery.trim().toLowerCase();
@@ -504,14 +643,18 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
 
   const handleCancelEdit = () => {
     setEditingTempId(null);
-    if (produceCatalog.length > 0) {
+    setQtyInput(50);
+    if (isCameraActive && !isCommitted) {
+      setSelectedProduct(null);
+      setCropSearchQuery('');
+      resumeAiScanningForNextItem('Ready to scan next produce...');
+    } else if (produceCatalog.length > 0) {
       setSelectedProduct(produceCatalog[0]);
       setCropSearchQuery(produceCatalog[0].name);
     } else {
       setSelectedProduct(null);
       setCropSearchQuery('');
     }
-    setQtyInput(50);
   };
 
   const handleSubmitHarvest = (e: FormEvent) => {
@@ -523,7 +666,7 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
     }
 
     if (!selectedProduct) {
-      triggerToast('Please select a valid crop product from the catalog.', 'error');
+      triggerToast('Please select or scan a valid crop product.', 'error');
       return;
     }
 
@@ -543,31 +686,66 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
     };
 
     if (editingTempId) {
-      setHarvestItems((prev) => prev.map((item) => (item.tempId === editingTempId ? payload : item)));
-      triggerToast(`Harvest line "${payload.name}" updated!`, 'success');
+      const updatedList = harvestItems.map((item) => (item.tempId === editingTempId ? payload : item));
+      harvestItemsRef.current = updatedList;
+      setHarvestItems(updatedList);
       setEditingTempId(null);
+      triggerToast(`Harvest line "${payload.name}" updated!`, 'success');
     } else {
       const exists = harvestItems.some((i) => i.productId === payload.productId && i.date === payload.date);
       if (exists) {
         triggerToast('This crop on this delivery date is already added to this batch.', 'error');
+        if (isCameraActive) {
+          resumeAiScanningForNextItem('Point camera at a different produce item...');
+        }
         return;
       }
-      setHarvestItems((prev) => [payload, ...prev]);
-      triggerToast(`Added ${payload.name} (${payload.qty} ${payload.unit}) to batch.`, 'success');
+      const nextList = [payload, ...harvestItems];
+      harvestItemsRef.current = nextList;
+      setHarvestItems(nextList);
+      triggerToast(
+        isCameraActive
+          ? `Added ${payload.name} (${payload.qty} ${payload.unit}). Scanning next produce...`
+          : `Added ${payload.name} (${payload.qty} ${payload.unit}) to batch.`,
+        'success'
+      );
     }
 
+    // Reset quantity and immediately restart AI scanner for the next product
     setQtyInput(50);
+    setShowCropDropdown(false);
+
+    if (isCameraActive && !isCommitted) {
+      // Clear current selection so the form is ready for the newly scanned produce
+      setSelectedProduct(null);
+      setCropSearchQuery('');
+      resumeAiScanningForNextItem('Scanning for next produce item...');
+    } else {
+      // If camera is off, auto-advance to the next unadded catalog item for convenience
+      const nextAvailable = produceCatalog.find(
+        (p) => !harvestItemsRef.current.some((item) => item.productId === p.id && item.date === harvestDate)
+      );
+      if (nextAvailable) {
+        setSelectedProduct(nextAvailable);
+        setCropSearchQuery(nextAvailable.name);
+      }
+    }
   };
 
   const handleEditItem = (item: HarvestDraftItem) => {
     setEditingTempId(item.tempId);
     setHarvestDate(item.date);
     setQtyInput(item.qty);
+    // Pause AI auto-overwriting while farmer is editing an existing line
+    setIsAiScanning(false);
 
     const found = produceCatalog.find((p) => p.id === item.productId);
     if (found) {
       setSelectedProduct(found);
       setCropSearchQuery(found.name);
+    } else {
+      setSelectedProduct({ id: item.productId, name: item.name, unit: item.unit });
+      setCropSearchQuery(item.name);
     }
 
     if (typeof window !== 'undefined') {
@@ -578,11 +756,12 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
   const handleDeleteItem = (tempId: string) => {
     if (isCommitted) return;
     if (editingTempId === tempId) handleCancelEdit();
-    setHarvestItems((prev) => prev.filter((i) => i.tempId !== tempId));
+    const updated = harvestItems.filter((i) => i.tempId !== tempId);
+    harvestItemsRef.current = updated;
+    setHarvestItems(updated);
     triggerToast('Harvest line removed.', 'info');
   };
 
-  
   const handleCommitBatch = async (): Promise<void> => {
     if (harvestItems.length === 0 || isCommitted || isSubmitting) return;
 
@@ -590,7 +769,6 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
     try {
       const userRaw = localStorage.getItem('user');
       const user = userRaw ? JSON.parse(userRaw) : null;
-      // Farm ID = User ID
       const resolvedUserId = currentUser?._id || user?._id || user?.userId || localStorage.getItem('farmId');
 
       if (!resolvedUserId) {
@@ -599,7 +777,6 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
         return;
       }
 
-      // Submit each harvest concurrently
       await Promise.all(
         harvestItems.map((item) =>
           api.post('/harvests/create', {
@@ -612,7 +789,8 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
       );
 
       setIsCommitted(true);
-      triggerToast(' Harvest batch successfully broadcasted to wholesale network!', 'success');
+      setIsAiScanning(false);
+      triggerToast('Harvest batch successfully broadcasted to wholesale network!', 'success');
 
       setTimeout(() => {
         window.location.href = '/farmdashboard';
@@ -627,8 +805,15 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
   };
 
   const handleResetBatch = (): void => {
+    harvestItemsRef.current = [];
     setHarvestItems([]);
     setIsCommitted(false);
+    setEditingTempId(null);
+    if (isCameraActive) {
+      setSelectedProduct(null);
+      setCropSearchQuery('');
+      resumeAiScanningForNextItem('Batch reset. Scanning for produce...');
+    }
     triggerToast('Intake batch reset to DRAFT.', 'info');
   };
 
@@ -672,7 +857,7 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
             <span className="logo-text">
               රන් <span>පොළොව</span>
             </span>
-            <span className="module-tag">Farmer Harvest</span>
+            
           </a>
 
           <div className="nav-right-actions">
@@ -772,9 +957,15 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
               </div>
             </div>
             <div className="kpi-value" style={{ color: isCameraActive ? '#22c55e' : '#f59e0b' }}>
-              {isCameraActive ? 'LIVE' : 'STANDBY'}
+              {isCameraActive ? (isAiScanning ? 'SCANNING' : 'LOCKED') : 'STANDBY'}
             </div>
-            <div className="kpi-subtext">Visual Verification</div>
+            <div className="kpi-subtext">
+              {aiDetectedLabel
+                ? `Detected: ${aiDetectedLabel}`
+                : scanHint
+                ? scanHint
+                : 'AI Produce Identification'}
+            </div>
           </div>
 
           <div className="kpi-card">
@@ -801,10 +992,25 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
               <div className="camera-toolbar">
                 <div className="camera-toolbar-left">
                   <VideoIcon size={16} style={{ color: '#22c55e' }} />
-                  <span>Optical Quality Scanner &bull; Produce Inspection</span>
+                  <span>Optical AI Scanner &bull; Auto Product Detection</span>
                 </div>
 
                 <div className="camera-toolbar-right">
+                  {isCameraActive && !isAiScanning && !isCommitted && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedProduct(null);
+                        setCropSearchQuery('');
+                        resumeAiScanningForNextItem('Scanning for new produce...');
+                      }}
+                      className="camera-action-btn"
+                    >
+                      <RotateCcwIcon size={14} />
+                      <span>Scan Again</span>
+                    </button>
+                  )}
+
                   {hasMultipleCameras && isCameraActive && (
                     <button type="button" onClick={flipCamera} className="camera-action-btn">
                       <FlipHorizontalIcon size={14} />
@@ -835,8 +1041,20 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
 
                 {isCameraActive ? (
                   <div className="camera-overlay-reticle">
-                    <span className="reticle-badge-top">Live Inspection Active</span>
-                    <span className="reticle-badge-bottom">Mode: {facingMode.toUpperCase()}</span>
+                    <span className="reticle-badge-top">
+                      {aiDetectedLabel
+                        ? `Detected: ${aiDetectedLabel}`
+                        : scanHint
+                        ? scanHint
+                        : isAiScanning
+                        ? 'AI Scanning Produce...'
+                        : 'Live Inspection Active'}
+                    </span>
+                    <span className="reticle-badge-bottom">
+                      {aiDetectedLabel
+                        ? 'Auto-Selected in Form (Add to Roster to scan next)'
+                        : `Mode: ${facingMode.toUpperCase()}`}
+                    </span>
                   </div>
                 ) : (
                   <div className={`camera-standby-placeholder ${cameraError ? 'has-error' : ''}`}>
@@ -847,7 +1065,7 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
                       {cameraError ? 'Camera Stream Error' : 'Live Camera Standby'}
                     </div>
                     <p className="camera-standby-desc">
-                      {cameraError || 'Use optical verification to inspect visual freshness prior to submission.'}
+                      {cameraError || 'Turn on camera to automatically identify and select harvested produce.'}
                     </p>
                   </div>
                 )}
@@ -870,17 +1088,26 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
                   <span>Harvested Crop Produce (productId)</span>
                   <span className="form-label-tag">Required &bull; Catalog</span>
                 </label>
-                <div style={{ position: 'relative' }}>
+                <div style={{ position: 'relative' }} ref={cropDropdownRef}>
                   <input
                     type="text"
                     value={cropSearchQuery}
                     onFocus={() => setShowCropDropdown(true)}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                      setCropSearchQuery(e.target.value);
+                      const val = e.target.value;
+                      setCropSearchQuery(val);
                       setShowCropDropdown(true);
+                      const exactMatch = produceCatalog.find(
+                        (p) => p.name.toLowerCase() === val.trim().toLowerCase()
+                      );
+                      setSelectedProduct(exactMatch || null);
                     }}
                     required
-                    placeholder="Search crop from catalog..."
+                    placeholder={
+                      isCameraActive && isAiScanning
+                        ? 'AI is scanning camera feed... or type to select manually'
+                        : 'Search crop from catalog...'
+                    }
                     className="form-input"
                     disabled={isCommitted}
                   />
@@ -888,21 +1115,30 @@ export const FarmerHarvest: FC<FarmerHarvestProps> = ({ currentUser }) => {
                   {showCropDropdown && (
                     <div className="floating-results-dropdown">
                       {filteredCatalog.length > 0 ? (
-                        filteredCatalog.map((item) => (
-                          <button
-                            key={item.id}
-                            type="button"
-                            onClick={() => {
-                              setSelectedProduct(item);
-                              setCropSearchQuery(item.name);
-                              setShowCropDropdown(false);
-                            }}
-                            className={`search-result-row ${selectedProduct?.id === item.id ? 'active' : ''}`}
-                          >
-                            <span style={{ fontWeight: 700 }}>{item.name}</span>
-                            <span className="search-result-badge">{item.unit}</span>
-                          </button>
-                        ))
+                        filteredCatalog.map((item) => {
+                          const isAlreadyAdded = harvestItems.some(
+                            (h) => h.productId === item.id && h.date === harvestDate
+                          );
+                          return (
+                            <button
+                              key={item.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedProduct(item);
+                                setCropSearchQuery(item.name);
+                                setShowCropDropdown(false);
+                                setAiDetectedLabel(item.name);
+                                setIsAiScanning(false);
+                              }}
+                              className={`search-result-row ${selectedProduct?.id === item.id ? 'active' : ''}`}
+                            >
+                              <span style={{ fontWeight: 700 }}>
+                                {item.name} {isAlreadyAdded ? '(Added)' : ''}
+                              </span>
+                              <span className="search-result-badge">{item.unit}</span>
+                            </button>
+                          );
+                        })
                       ) : (
                         <div style={{ padding: '12px 14px', fontSize: '12px', color: 'var(--text-muted)' }}>
                           No products found in catalog.
