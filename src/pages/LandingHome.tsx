@@ -259,7 +259,7 @@ export const AgriSmartApp: React.FC = () => {
                 e.currentTarget.src = '/logo.jpg';
               }}
             />
-            Agri <span>SMART</span>
+            රන් <span>පොළොව</span>
           </a>
 
           <div className="nav-right">
