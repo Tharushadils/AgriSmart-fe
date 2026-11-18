@@ -373,18 +373,11 @@ export const ManagerTransferDispatchDesk: FC = () => {
             <span className="logo-text">
               රන් <span>පොළොව</span>
             </span>
-            <span className="module-tag">Center Transfers</span>
+           
           </a>
 
           <div className="nav-right-actions">
-            <button
-              onClick={fetchTransferData}
-              disabled={isLoading || isSyncing}
-              className="theme-toggle-btn"
-              title="Refresh & Auto-Save Transfer Plan"
-            >
-              <RefreshCw className={`w-4 h-4 ${isLoading || isSyncing ? 'animate-spin' : ''}`} />
-            </button>
+            
             <button
               onClick={() => setIsDark(!isDark)}
               className="theme-toggle-btn"
@@ -433,9 +426,7 @@ export const ManagerTransferDispatchDesk: FC = () => {
               </div>
             </div>
 
-            <a href="/managerdashboard" className="nav-back-link">
-              <span>&larr; Manager Operations</span>
-            </a>
+            
           </div>
         </div>
       </header>
