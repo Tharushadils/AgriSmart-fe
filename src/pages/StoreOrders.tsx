@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, type FC, type SVGProps } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback, type FC, type SVGProps } from 'react';
 import {
   Sprout,
   Sun,
@@ -19,7 +19,6 @@ import {
   SlidersHorizontal,
   AlertCircle,
   Send,
-  Info,
   Calendar
 } from 'lucide-react';
 import api from '../service/api';
@@ -155,12 +154,56 @@ export const AgriSmartPreOrder: FC = () => {
   const [facingMode, setFacingMode] = useState<FacingMode>('environment');
   const [hasMultipleCameras, setHasMultipleCameras] = useState<boolean>(false);
 
+  // --- AI Auto-Detection State & Refs ---
+  const [isAiScanning, setIsAiScanning] = useState<boolean>(false);
+  const [aiDetectedLabel, setAiDetectedLabel] = useState<string | null>(null);
+  const [scanHint, setScanHint] = useState<string | null>(null);
+
+  const isRequestInFlightRef = useRef<boolean>(false);
+  const scanSessionRef = useRef<number>(0);
+  const orderItemsRef = useRef<PreOrderBasketItem[]>(orderItems);
+  const productsCatalogRef = useRef<ProductItem[]>(productsCatalog);
+  
+  const searchDropdownRef = useRef<HTMLDivElement | null>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    orderItemsRef.current = orderItems;
+  }, [orderItems]);
+
+  useEffect(() => {
+    productsCatalogRef.current = productsCatalog;
+  }, [productsCatalog]);
+
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
-  const triggerToast = (msg: string, type: ToastMessage['type'] = 'success'): void => {
+  const triggerToast = useCallback((msg: string, type: ToastMessage['type'] = 'success'): void => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToast({ msg, type });
-    setTimeout(() => setToast(null), 3400);
-  };
+    toastTimerRef.current = setTimeout(() => setToast(null), 3500);
+  }, []);
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (searchDropdownRef.current && !searchDropdownRef.current.contains(e.target as Node)) {
+        setIsSearchOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
+
+  // Cleanly restart AI scanning
+  const resumeAiScanningForNextItem = useCallback((customHint?: string) => {
+    scanSessionRef.current += 1;
+    isRequestInFlightRef.current = false;
+    setAiDetectedLabel(null);
+    setScanHint(customHint || null);
+    if (isCameraActive) {
+      setIsAiScanning(true);
+    }
+  }, [isCameraActive]);
+
 
   useEffect(() => {
     const fetchCatalog = async () => {
@@ -183,7 +226,7 @@ export const AgriSmartPreOrder: FC = () => {
     };
 
     fetchCatalog();
-  }, []);
+  }, [triggerToast]);
 
   useEffect(() => {
     async function checkDevices(): Promise<void> {
@@ -201,6 +244,8 @@ export const AgriSmartPreOrder: FC = () => {
   }, []);
 
   const stopCamera = (): void => {
+    scanSessionRef.current += 1;
+    isRequestInFlightRef.current = false;
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
@@ -209,6 +254,9 @@ export const AgriSmartPreOrder: FC = () => {
       videoRef.current.srcObject = null;
     }
     setIsCameraActive(false);
+    setIsAiScanning(false);
+    setAiDetectedLabel(null);
+    setScanHint(null);
   };
 
   const startCamera = async (targetFacing: FacingMode = facingMode): Promise<void> => {
@@ -239,6 +287,9 @@ export const AgriSmartPreOrder: FC = () => {
       }
       setIsCameraActive(true);
       setFacingMode(targetFacing);
+      setAiDetectedLabel(null);
+      setScanHint(null);
+      setIsAiScanning(true);
     } catch (err: unknown) {
       console.error('Camera stream error:', err);
       let errorMsg = 'Could not access camera feed.';
@@ -274,6 +325,97 @@ export const AgriSmartPreOrder: FC = () => {
       stopCamera();
     };
   }, []);
+
+  // --- AI Frame Capture & Auto-Select Logic ---
+  const captureAndDetectProduce = useCallback(async (): Promise<void> => {
+    if (!videoRef.current || !isCameraActive || !isAiScanning || isRequestInFlightRef.current) {
+      return;
+    }
+
+    if (videoRef.current.readyState < 2) return;
+
+    const currentSession = scanSessionRef.current;
+    isRequestInFlightRef.current = true;
+
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 480;
+      canvas.height = 360;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+      const imageBase64 = canvas.toDataURL('image/jpeg', 0.75);
+
+      const res = await api.post('/ai/detect-product', { imageBase64 });
+
+      // Ignore stale responses if user moved on
+      if (currentSession !== scanSessionRef.current) {
+        return;
+      }
+
+      if (res.data?.detected && res.data?.product) {
+        const detected = res.data.product;
+        const currentCatalog = productsCatalogRef.current;
+
+        const matchedFromCatalog = currentCatalog.find(
+          (p) =>
+            p._id === String(detected._id) ||
+            p.name.trim().toLowerCase() === detected.name?.trim().toLowerCase()
+        );
+
+        const finalItem: ProductItem = matchedFromCatalog || {
+          _id: String(detected._id),
+          name: detected.name,
+          unit: detected.unit || 'kg',
+          category: detected.category || ''
+        };
+
+        // Check if already in basket
+        const alreadyInBasket = orderItemsRef.current.some(
+          (item) => item.productId === finalItem._id
+        );
+
+        if (alreadyInBasket) {
+           setScanHint(`"${finalItem.name}" is already in basket. Scan next produce...`);
+           return;
+        }
+
+        setScanHint(null);
+        setSelectedProduct(finalItem);
+        setSearchQuery(finalItem.name);
+        setIsSearchOpen(false);
+        setAiDetectedLabel(finalItem.name);
+        setIsAiScanning(false);
+        triggerToast(`AI Detected: ${finalItem.name} selected automatically!`, 'success');
+      }
+    } catch (err) {
+      console.error('AI Product Scan Error:', err);
+    } finally {
+      if (currentSession === scanSessionRef.current) {
+        isRequestInFlightRef.current = false;
+      }
+    }
+  }, [isCameraActive, isAiScanning, triggerToast]);
+
+
+  useEffect(() => {
+    if (!isCameraActive || !isAiScanning) return;
+
+    const initialTimer = setTimeout(() => {
+      captureAndDetectProduce();
+    }, 500);
+
+    const intervalId = setInterval(() => {
+      captureAndDetectProduce();
+    }, 2200);
+
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(intervalId);
+    };
+  }, [isCameraActive, isAiScanning, captureAndDetectProduce]);
+
 
   const filteredCatalog = useMemo(() => {
     if (!searchQuery.trim()) return productsCatalog;
@@ -334,7 +476,32 @@ export const AgriSmartPreOrder: FC = () => {
       ];
     });
 
-    triggerToast(`Added ${selectedProduct.name} (${qty} ${selectedProduct.unit || 'kg'}) to pre-order.`);
+    triggerToast(
+       isCameraActive 
+        ? `Added ${selectedProduct.name} (${qty} ${selectedProduct.unit || 'kg'}). Scanning next...` 
+        : `Added ${selectedProduct.name} (${qty} ${selectedProduct.unit || 'kg'}) to pre-order.`
+    );
+    
+    // Reset selection and resume scanning
+    setQtyInput(10);
+    setIsSearchOpen(false);
+    
+    if (isCameraActive) {
+      setSelectedProduct(null);
+      setSearchQuery('');
+      resumeAiScanningForNextItem('Scanning for next produce item...');
+    } else {
+        const nextAvailable = productsCatalog.find(
+           (p) => !orderItemsRef.current.some((item) => item.productId === p._id) && p._id !== selectedProduct._id
+        );
+        if (nextAvailable) {
+           setSelectedProduct(nextAvailable);
+           setSearchQuery(nextAvailable.name);
+        } else {
+            setSelectedProduct(null);
+            setSearchQuery('');
+        }
+    }
   };
 
   const handleRemoveItem = (productId: string, name: string): void => {
@@ -346,6 +513,7 @@ export const AgriSmartPreOrder: FC = () => {
     setEditingItemId(item.productId);
     setEditQtyValue(item.quantity);
     setEditQtyError('');
+    setIsAiScanning(false); // Pause AI while editing
   };
 
   const saveEditItem = (item: PreOrderBasketItem): void => {
@@ -397,6 +565,7 @@ export const AgriSmartPreOrder: FC = () => {
       const count = response.data?.data?.length || orderItems.length;
       triggerToast(` Successfully submitted ${count} pre-order line(s) for delivery on ${deliveryDate}!`, 'success');
       setOrderItems([]);
+      setIsAiScanning(false);
     } catch (err: any) {
       console.error('Order creation failed:', err);
       const msg = err.response?.data?.message || 'Failed to submit pre-order to server.';
@@ -408,6 +577,11 @@ export const AgriSmartPreOrder: FC = () => {
 
   const handleResetOrder = (): void => {
     setOrderItems([]);
+    if(isCameraActive) {
+      setSelectedProduct(null);
+      setSearchQuery('');
+      resumeAiScanningForNextItem('Basket reset. Scanning for produce...');
+    }
     triggerToast('Pre-Order basket cleared.', 'info');
   };
 
@@ -498,7 +672,7 @@ export const AgriSmartPreOrder: FC = () => {
             </div>
           </div>
 
-          <div className="relative">
+          <div className="relative" ref={searchDropdownRef}>
             <div className={`flex items-center px-3.5 py-2.5 rounded-xl border transition-all ${
               isDark 
                 ? 'bg-slate-900/90 border-slate-800 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20' 
@@ -507,12 +681,17 @@ export const AgriSmartPreOrder: FC = () => {
               <Search className={`w-4 h-4 mr-2.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
               <input
                 type="text"
-                placeholder={isLoadingCatalog ? 'Loading products catalog...' : 'Search produce from database...'}
+                placeholder={isLoadingCatalog ? 'Loading products catalog...' : isCameraActive && isAiScanning ? 'AI is scanning camera feed... or type to search' : 'Search produce from database...'}
                 value={searchQuery}
                 onFocus={() => setIsSearchOpen(true)}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setSearchQuery(e.target.value);
+                  const val = e.target.value;
+                  setSearchQuery(val);
                   setIsSearchOpen(true);
+                  const exactMatch = productsCatalog.find(
+                     (p) => p.name.toLowerCase() === val.trim().toLowerCase()
+                  );
+                  setSelectedProduct(exactMatch || null);
                 }}
                 className={`w-full bg-transparent text-sm focus:outline-none ${isDark ? 'text-slate-100 placeholder:text-slate-500' : 'text-slate-900 placeholder:text-slate-400'}`}
               />
@@ -522,6 +701,7 @@ export const AgriSmartPreOrder: FC = () => {
                   onClick={() => {
                     setSearchQuery('');
                     setIsSearchOpen(false);
+                    setSelectedProduct(null);
                   }}
                   className="p-1 text-slate-400 hover:text-slate-200 cursor-pointer"
                   aria-label="Clear search"
@@ -532,7 +712,7 @@ export const AgriSmartPreOrder: FC = () => {
             </div>
 
             {isSearchOpen && (
-              <div className={`mt-1.5 max-h-60 overflow-y-auto rounded-xl border shadow-xl z-30 transition-all ${
+              <div className={`absolute mt-1.5 w-full max-h-60 overflow-y-auto rounded-xl border shadow-xl z-30 transition-all ${
                 isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'
               }`}>
                 {filteredCatalog.length === 0 ? (
@@ -540,35 +720,40 @@ export const AgriSmartPreOrder: FC = () => {
                     No matching produce found for &quot;{searchQuery}&quot;.
                   </div>
                 ) : (
-                  filteredCatalog.map((item) => (
-                    <button
-                      key={item._id}
-                      type="button"
-                      onClick={() => {
-                        setSelectedProduct(item);
-                        setQtyInput(10);
-                        setQtyError('');
-                        setIsSearchOpen(false);
-                        setSearchQuery(item.name);
-                      }}
-                      className={`w-full text-left px-4 py-2.5 flex items-center justify-between text-xs sm:text-sm border-b transition-colors last:border-b-0 cursor-pointer ${
-                        selectedProduct?._id === item._id
-                          ? isDark ? 'bg-emerald-950/50 text-emerald-300' : 'bg-emerald-50 text-emerald-800'
-                          : isDark ? 'border-slate-800 hover:bg-slate-800/60' : 'border-slate-100 hover:bg-slate-50'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        <span className="font-semibold">{item.name}</span>
-                        {item.category && (
-                          <span className="text-[10px] text-slate-400 uppercase font-mono">({item.category})</span>
-                        )}
-                      </div>
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded ${isDark ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>
-                        {item.unit || 'kg'}
-                      </span>
-                    </button>
-                  ))
+                  filteredCatalog.map((item) => {
+                     const isAlreadyAdded = orderItems.some((h) => h.productId === item._id);
+                     return (
+                        <button
+                          key={item._id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedProduct(item);
+                            setQtyInput(10);
+                            setQtyError('');
+                            setIsSearchOpen(false);
+                            setSearchQuery(item.name);
+                            setAiDetectedLabel(item.name);
+                            setIsAiScanning(false);
+                          }}
+                          className={`w-full text-left px-4 py-2.5 flex items-center justify-between text-xs sm:text-sm border-b transition-colors last:border-b-0 cursor-pointer ${
+                            selectedProduct?._id === item._id
+                              ? isDark ? 'bg-emerald-950/50 text-emerald-300' : 'bg-emerald-50 text-emerald-800'
+                              : isDark ? 'border-slate-800 hover:bg-slate-800/60' : 'border-slate-100 hover:bg-slate-50'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span className="font-semibold">{item.name} {isAlreadyAdded ? '(Added)' : ''}</span>
+                            {item.category && (
+                              <span className="text-[10px] text-slate-400 uppercase font-mono">({item.category})</span>
+                            )}
+                          </div>
+                          <span className={`text-xs font-medium px-2 py-0.5 rounded ${isDark ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>
+                            {item.unit || 'kg'}
+                          </span>
+                        </button>
+                      );
+                  })
                 )}
               </div>
             )}
@@ -588,6 +773,22 @@ export const AgriSmartPreOrder: FC = () => {
               </div>
 
               <div className="flex items-center gap-2">
+                 {isCameraActive && !isAiScanning && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedProduct(null);
+                        setSearchQuery('');
+                        resumeAiScanningForNextItem('Scanning for new produce...');
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 border transition-all cursor-pointer ${
+                        isDark ? 'bg-slate-800 border-slate-700 hover:bg-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-700 shadow-xs'
+                      }`}
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Scan Again</span>
+                    </button>
+                  )}
                 {hasMultipleCameras && isCameraActive && (
                   <button
                     type="button"
@@ -623,6 +824,37 @@ export const AgriSmartPreOrder: FC = () => {
                 muted
                 className={`w-full h-full object-cover transition-opacity duration-300 ${isCameraActive ? 'opacity-100' : 'opacity-0 absolute'}`}
               />
+               {isCameraActive && (
+                  <div className="absolute inset-0 flex flex-col justify-between p-4 pointer-events-none">
+                    <div className="flex justify-center">
+                       <span className="px-3 py-1.5 bg-black/60 backdrop-blur-sm text-white text-xs font-semibold rounded-full border border-white/20 shadow-lg">
+                         {aiDetectedLabel
+                          ? `Detected: ${aiDetectedLabel}`
+                          : scanHint
+                          ? scanHint
+                          : isAiScanning
+                          ? 'AI Scanning Produce...'
+                          : 'Live Inspection Active'}
+                       </span>
+                    </div>
+                    
+                    {/* Corner Brackets Reticle */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 sm:w-64 sm:h-64 border-2 border-emerald-500/50 rounded-xl opacity-50">
+                        <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-emerald-400 rounded-tl-xl"></div>
+                        <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-emerald-400 rounded-tr-xl"></div>
+                        <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-emerald-400 rounded-bl-xl"></div>
+                        <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-emerald-400 rounded-br-xl"></div>
+                    </div>
+                    
+                    <div className="flex justify-center">
+                       <span className="px-3 py-1 bg-black/60 text-white/80 text-[10px] uppercase tracking-wider rounded border border-white/10">
+                           {aiDetectedLabel
+                            ? 'Auto-Selected in Form (Add to Order to scan next)'
+                            : `Mode: ${facingMode}`}
+                       </span>
+                    </div>
+                  </div>
+                )}
               {!isCameraActive && (
                 <div className="p-6 text-center flex flex-col items-center justify-center max-w-sm">
                   <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-3 ${
@@ -634,7 +866,7 @@ export const AgriSmartPreOrder: FC = () => {
                     {cameraError ? 'Camera Feed Error' : 'Live Camera Inactive'}
                   </h3>
                   <p className={`text-xs mt-1 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                    {cameraError ? cameraError : "Click 'Start Camera' to verify crop samples with your camera hardware."}
+                    {cameraError ? cameraError : "Click 'Start Camera' to automatically identify products for your pre-order."}
                   </p>
                 </div>
               )}
