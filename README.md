@@ -1,75 +1,46 @@
-# React + TypeScript + Vite
+# 🌾 රන් පොළොව (Ran Polowa) — Agricultural Supply Chain & Produce Management Platform (Frontend)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**රන් පොළොව (Ran Polowa)** is a full-stack agricultural supply chain, procurement, and produce management web application designed to streamline operations across **Farmers**, **Store Owners**, **Procurement Managers**, and **Collection Centers**.
 
-Currently, two official plugins are available:
+🌐 **Live Application:** [https://ran-polowa.vercel.app](https://ran-polowa.vercel.app)  
+🔗 **Backend API:** [https://agri-smart-be-git-feature-new-feature-tharusha-s-team.vercel.app](https://agri-smart-be-git-feature-new-feature-tharusha-s-team.vercel.app)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## ✨ Key Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Role-Based Dashboards & Approval Workflows:** Customized interfaces and protected routes for Farmers, Store Owners, and Managers.
+- **Store Pre-Orders & Finalization:** Store owners can place produce pre-orders with delivery deadlines, review order history, and confirm final allocations.
+- **Farmer Harvest Submissions:** Farmers can submit harvest availability, track procurement status, and view approved purchase allocations.
+- **District Pricing Management:** Managers can configure and publish district-level produce pricing.
+- **Collection Center & Dispatch Operations:** End-to-end inventory tracking, inter-center transfers, and dispatch load management.
+- **AI Produce Identification *(Planned)*:** Upcoming AI-powered image recognition feature to automatically identify produce types and quality grades during harvest submission.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Framework:** React + TypeScript + Vite
+- **Routing:** React Router
+- **HTTP Client:** Axios
+- **Styling & Icons:** Tailwind CSS / Custom CSS & Custom SVG Iconography
+- **Deployment:** Vercel
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 📁 Project Structure
 
-```
-
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+```text
+AgriSmart-fe/
+├── public/              # Static public assets
+├── src/
+│   ├── assets/          # Images, icons, and branding assets
+│   ├── components/      # Reusable UI components (UserProfileMenu, etc.)
+│   ├── pages/           # Role-specific views (Farmer, Store, Manager)
+│   ├── router/          # Protected & public React Router configurations
+│   ├── service/         # API & authentication helper modules
+│   ├── api.ts           # Axios instance configured with live backend URL
+│   └── main.tsx         # Application entry point
+├── .npmrc               # Peer dependency configuration for Vercel builds
+├── package.json         # Project dependencies and Vite build scripts
+└── vercel.json          # SPA rewrite rules for client-side routing
