@@ -558,7 +558,7 @@ export const FarmerProcurementStatus: FC = () => {
             <span className="logo-text">
               රන් <span>පොළොව</span>
             </span>
-            <span className="module-tag">Crop Allocation</span>
+          
           </a>
 
           <div className="nav-right-actions">
@@ -573,9 +573,7 @@ export const FarmerProcurementStatus: FC = () => {
 
             <UserProfileMenu />
 
-            <a href="/managerdashboard" className="nav-back-link">
-              <span>&larr; Manager Operations</span>
-            </a>
+        
           </div>
         </div>
       </header>
