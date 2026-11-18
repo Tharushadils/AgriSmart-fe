@@ -166,11 +166,27 @@ export const StoreOrderHistory: FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [dateFilter, setDateFilter] = useState<string>('');
 
-  const fetchStoreOrderHistory = async () => {
+ const fetchStoreOrderHistory = async () => {
     setIsLoading(true);
     try {
-      
-      const res = await api.get('/orders/my-orders').catch(() => api.get('/orders'));
+      const userRaw = localStorage.getItem('user');
+      const parsedUser = userRaw ? JSON.parse(userRaw) : null;
+      const resolvedId =
+        parsedUser?._id ||
+        parsedUser?.id ||
+        parsedUser?.userId ||
+        localStorage.getItem('storeId');
+
+      let res;
+      if (resolvedId) {
+        res = await api
+          .get(`/orders/store/${resolvedId}`)
+          .catch(() => api.get(`/orders/user/${resolvedId}`))
+          .catch(() => api.get('/orders'));
+      } else {
+        res = await api.get('/orders');
+      }
+
       const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
       setOrders(list);
     } catch (err: any) {
