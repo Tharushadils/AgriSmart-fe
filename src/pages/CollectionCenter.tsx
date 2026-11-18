@@ -992,7 +992,6 @@ export const CollectionCenterRegistration: FC<CollectionCenterRegistrationProps>
             <span className="logo-text">
               රන් <span>පොළොව</span>
             </span>
-            <span className="module-tag">Collection Centers</span>
           </a>
 
           <div className="nav-right-actions">
@@ -1082,13 +1081,7 @@ export const CollectionCenterRegistration: FC<CollectionCenterRegistrationProps>
       <section className="page-hero-banner">
         <div className="hero-flex-wrap">
           <div>
-            <div className="breadcrumb-trail">
-              <a href="/user">Portal</a>
-              <span>/</span>
-              <a href="#">Logistics</a>
-              <span>/</span>
-              <span style={{ color: '#f59e0b' }}>Collection Centers</span>
-            </div>
+            
             <h1 className="page-title">
               Agrarian Intake & <span>Collection Centers</span>
             </h1>
