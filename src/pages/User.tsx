@@ -157,13 +157,6 @@ const EyeOffIcon: FC<IconProps> = (p) => (
   </BaseIcon>
 );
 
-const ChevronDownIcon: FC<IconProps> = (p) => (
-  <BaseIcon {...p}>
-    <polyline points="6 9 12 15 18 9" />
-  </BaseIcon>
-);
-
-
 const SeedlingHarvestIcon: FC<IconProps> = (p) => (
   <BaseIcon {...p}>
     <path d="M2 20c2-1 4-1 6 0s4 1 6 0 4-1 6 0" />
@@ -200,7 +193,7 @@ const WarehouseIcon: FC<IconProps> = (p) => (
 const PrecisionGearsIcon: FC<IconProps> = (p) => (
   <BaseIcon {...p}>
     <circle cx="12" cy="12" r="3" />
-    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
   </BaseIcon>
 );
 
@@ -292,6 +285,7 @@ export interface IUserItem {
   email: string;
   telephoneNumber: string;
   password?: string;
+  role?: UserRole;
   roles: UserRole[];
   approve: boolean;
   isEmailVerified: boolean;
@@ -319,9 +313,18 @@ export interface UserManagerViewProps {
   onToggleActive?: (id: string, nextActive: boolean) => void;
 }
 
+// Helper: normalize backend `role` string or `roles` array into UserRole[]
+const normalizeRoles = (user: any): UserRole[] => {
+  if (Array.isArray(user?.roles) && user.roles.length > 0) {
+    return user.roles.map((r: string) => String(r).trim().toUpperCase() as UserRole);
+  }
+  if (user?.role) {
+    return [String(user.role).trim().toUpperCase() as UserRole];
+  }
+  return [];
+};
 
 export const UserManagerView: FC<UserManagerViewProps> = ({
-  currentUser,
   onSaveUser,
   onDeleteUser,
   onToggleApprove,
@@ -336,33 +339,6 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
     }
     return true;
   });
-
-  // Profile dropdown menu state
-  const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
-  const profileMenuRef = useRef<HTMLDivElement>(null);
-
-  const [userState, setUserState] = useState(currentUser);
-
-  useEffect(() => {
-    if (currentUser?.name) {
-      setUserState(currentUser);
-      return;
-    }
-    const userRaw = localStorage.getItem('user');
-    if (userRaw) {
-      try {
-        const u = JSON.parse(userRaw);
-        setUserState({
-          name: u.fullName || u.name || 'Manager',
-          role: u.role || u.roles?.[0] || 'MANAGER',
-          email: u.email || '',
-          initials: (u.fullName || u.name || 'MG').slice(0, 2).toUpperCase(),
-        });
-      } catch {
-        // ignore parse error
-      }
-    }
-  }, [currentUser]);
 
   // Form Fields mirroring IUser
   const [name, setName] = useState<string>('');
@@ -385,7 +361,7 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
 
   // Toast Notification
   const [toast, setToast] = useState<ToastMessage | null>(null);
-  const toastTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Users State & Loading State
   const [usersList, setUsersList] = useState<IUserItem[]>([]);
@@ -395,12 +371,16 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await api.get('/auth/users'); // Backend user fetch endpoint
-      const data = res.data?.data || res.data || [];
-      setUsersList(data);
+      const res = await api.get('/auth/users');
+      const rawData = res.data?.data || res.data || [];
+      const normalized: IUserItem[] = (Array.isArray(rawData) ? rawData : []).map((u: any) => ({
+        ...u,
+        roles: normalizeRoles(u)
+      }));
+      setUsersList(normalized);
     } catch (err: any) {
       console.error('Failed to fetch users:', err);
-      triggerToast(' Failed to fetch user roster from backend.', 'error');
+      triggerToast('Failed to fetch user roster from backend.', 'error');
     } finally {
       setLoading(false);
     }
@@ -425,17 +405,6 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
     }
   }, [isDark]);
 
-  // Close profile dropdown on outside click
-  useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
-        setIsProfileOpen(false);
-      }
-    };
-    document.addEventListener('click', handleOutsideClick);
-    return () => document.removeEventListener('click', handleOutsideClick);
-  }, []);
-
   // Toast Trigger Helper
   const triggerToast = (msg: string, type: ToastMessage['type'] = 'success'): void => {
     if (toastTimerRef.current) {
@@ -458,7 +427,7 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
     });
   };
 
-  // Form Submit Handler 
+  // Form Submit Handler
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -487,29 +456,29 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
       name: trimmedName,
       email: trimmedEmail,
       telephoneNumber: trimmedPhone,
+      role: selectedRoles[0],
       roles: selectedRoles,
       approve,
       isEmailVerified,
       isActive
     };
 
-    if (password.trim()) {
-      payload.password = password.trim();
-    }
-
     try {
       if (editingId) {
-     
         await api.put(`/auth/users/${editingId}`, payload);
         triggerToast(`User account "${trimmedName}" updated!`, 'success');
         setEditingId(null);
       } else {
-      
+        if (!password.trim() || password.trim().length < 6) {
+          triggerToast('Password must be at least 6 characters long.', 'error');
+          return;
+        }
+        payload.password = password.trim();
         await api.post('/auth/register', payload);
         triggerToast(`User "${trimmedName}" provisioned into system!`, 'success');
       }
 
-      fetchUsers(); // Refresh 
+      fetchUsers();
 
       if (onSaveUser) {
         onSaveUser(payload as IUserItem);
@@ -527,21 +496,21 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
     } catch (err: any) {
       console.error('Save user error:', err);
       const msg = err.response?.data?.message || 'Failed to save user record.';
-      triggerToast(` ${msg}`, 'error');
+      triggerToast(msg, 'error');
     }
   };
 
-  // Edit User
+  // Edit User (auto-selects role from either user.roles or user.role)
   const handleEdit = (user: IUserItem) => {
     setEditingId(user._id || null);
     setName(user.name);
     setEmail(user.email);
     setTelephoneNumber(user.telephoneNumber);
     setPassword('');
-    setSelectedRoles(user.roles || []);
-    setApprove(user.approve);
-    setIsEmailVerified(user.isEmailVerified);
-    setIsActive(user.isActive);
+    setSelectedRoles(normalizeRoles(user));
+    setApprove(Boolean(user.approve));
+    setIsEmailVerified(Boolean(user.isEmailVerified));
+    setIsActive(user.isActive !== undefined ? Boolean(user.isActive) : true);
 
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -562,7 +531,7 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
     setIsActive(true);
   };
 
-  // Inline Quick Approve 
+  // Inline Quick Approve
   const handleQuickApprove = async (id?: string) => {
     if (!id) return;
     const target = usersList.find((u) => u._id === id);
@@ -583,11 +552,11 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
       triggerToast(`${target.name} clearance: ${nextApprove ? 'APPROVED' : 'PENDING'}`, nextApprove ? 'success' : 'info');
     } catch (err: any) {
       console.error('Approve toggle error:', err);
-      triggerToast(' Failed to update approval status.', 'error');
+      triggerToast('Failed to update approval status.', 'error');
     }
   };
 
-  // Inline Quick Toggle Active 
+  // Inline Quick Toggle Active
   const handleQuickToggleActive = async (id?: string) => {
     if (!id) return;
     const target = usersList.find((u) => u._id === id);
@@ -608,11 +577,11 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
       triggerToast(`Account for ${target.name} is now ${nextActive ? 'ACTIVE' : 'DEACTIVATED'}`, nextActive ? 'success' : 'info');
     } catch (err: any) {
       console.error('Active toggle error:', err);
-      triggerToast(' Failed to update active status.', 'error');
+      triggerToast('Failed to update active status.', 'error');
     }
   };
 
-  // Delete User 
+  // Delete User
   const handleDelete = async (id?: string) => {
     if (!id) return;
     const target = usersList.find((u) => u._id === id);
@@ -638,14 +607,15 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
       triggerToast('User account removed.', 'info');
     } catch (err: any) {
       console.error('Delete user error:', err);
-      triggerToast(' Failed to delete user from database.', 'error');
+      triggerToast('Failed to delete user from database.', 'error');
     }
   };
 
   // Filtered Roster
   const filteredUsers = useMemo(() => {
     return usersList.filter((u) => {
-      const matchesRole = roleFilter === 'ALL' || u.roles.includes(roleFilter as UserRole);
+      const userRoles = normalizeRoles(u);
+      const matchesRole = roleFilter === 'ALL' || userRoles.includes(roleFilter as UserRole);
       const matchesApproval =
         approvalFilter === 'ALL' ||
         (approvalFilter === 'APPROVED' && u.approve) ||
@@ -668,14 +638,8 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
   const activeUsersCount = useMemo(() => usersList.filter((u) => u.isActive).length, [usersList]);
   const verifiedEmailsCount = useMemo(() => usersList.filter((u) => u.isEmailVerified).length, [usersList]);
 
-  // Resolved Current User Details
-  const profileName = userState?.name || currentUser?.name || 'System Manager';
-  const profileRole = userState?.role || currentUser?.role || 'ROLE: MANAGER & OVERSIGHT';
-  const profileInitials = userState?.initials || currentUser?.initials || (profileName ? profileName.slice(0, 2).toUpperCase() : 'M');
-
   return (
     <div className={`user-page-root ${isDark ? 'dark-theme' : ''}`}>
-   
       <header className="header-wrapper">
         <div className="header-bg-svg-wrap">
           <svg viewBox="0 0 1440 120" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -705,7 +669,6 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
             <span className="logo-text">
               රන් <span>පොළොව</span>
             </span>
-           
           </a>
 
           <div className="nav-right-actions">
@@ -720,13 +683,10 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
             </button>
 
             <UserProfileMenu />
-
-            
           </div>
         </div>
       </header>
 
-      
       <section className="page-hero-banner">
         <div className="hero-doodle-bg" />
         <div className="hero-content-inner">
@@ -739,13 +699,10 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
                 Provision user records with IUser schema compliance, administer multi-role permissions, grant verified status, and clear pending approval queues.
               </p>
             </div>
-
-           
           </div>
         </div>
       </section>
 
-      
       <section className="kpi-section">
         <div className="kpi-grid">
           <div className="kpi-card">
@@ -756,7 +713,7 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
               </div>
             </div>
             <div className="kpi-value">{totalUsersCount}</div>
-            <div className="kpi-subtext">Active & verified system accounts</div>
+            <div className="kpi-subtext">Active &amp; verified system accounts</div>
           </div>
 
           <div className="kpi-card">
@@ -868,37 +825,36 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
               </div>
             </div>
 
-            {/* Password */}
-            <div className="form-group">
-              <label className="form-label">
-                <span>Account Password (password)</span>
-                {editingId && (
-                  <span style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 'normal' }}>
-                    Leave blank to preserve
+            {/* Password (shown only when creating a new user; removed in edit mode) */}
+            {!editingId && (
+              <div className="form-group">
+                <label className="form-label">
+                  <span>Account Password (password)</span>
+                  <span className="req">*</span>
+                </label>
+                <div className="input-wrap">
+                  <span className="input-icon">
+                    <LockIcon size={15} />
                   </span>
-                )}
-              </label>
-              <div className="input-wrap">
-                <span className="input-icon">
-                  <LockIcon size={15} />
-                </span>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  className="form-input"
-                  placeholder={editingId ? 'Unchanged credentials' : 'Create secret credentials...'}
-                  value={password}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-                />
-                <button
-                  type="button"
-                  className="pwd-toggle-btn"
-                  onClick={() => setShowPassword(!showPassword)}
-                  title="Toggle visibility"
-                >
-                  {showPassword ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
-                </button>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className="form-input"
+                    placeholder="Create secret credentials..."
+                    value={password}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="pwd-toggle-btn"
+                    onClick={() => setShowPassword(!showPassword)}
+                    title="Toggle visibility"
+                  >
+                    {showPassword ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Multi Role Selector */}
             <div className="roles-grid-label">
@@ -932,7 +888,7 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
                     <UserCheckIcon size={14} style={{ color: '#22c55e' }} />
                     <span>Manager Approval (approve)</span>
                   </div>
-                  <span className="clearance-desc">Clear user for marketplace trade & produce purchases</span>
+                  <span className="clearance-desc">Clear user for marketplace trade &amp; produce purchases</span>
                 </div>
                 <label className="switch-control">
                   <input
@@ -1080,13 +1036,15 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
             ) : (
               filteredUsers.map((u) => {
                 const isEditing = editingId === u._id;
-                const initials = (u.name || '')
-                  .split(' ')
-                  .filter(Boolean)
-                  .map((n) => n[0])
-                  .join('')
-                  .slice(0, 2)
-                  .toUpperCase() || 'U';
+                const displayRoles = normalizeRoles(u);
+                const initials =
+                  (u.name || '')
+                    .split(' ')
+                    .filter(Boolean)
+                    .map((n) => n[0])
+                    .join('')
+                    .slice(0, 2)
+                    .toUpperCase() || 'U';
 
                 return (
                   <div key={u._id} className={`user-card ${isEditing ? 'is-editing' : ''}`}>
@@ -1120,7 +1078,6 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
                         </div>
                       </div>
 
-                    
                       <div className="user-action-buttons">
                         <button
                           type="button"
@@ -1163,7 +1120,7 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
 
                     {/* Roles Badges */}
                     <div className="user-roles-row">
-                      {(u.roles || []).map((r) => (
+                      {displayRoles.map((r) => (
                         <span key={r} className="role-badge" data-role={r}>
                           {r}
                         </span>
@@ -1185,7 +1142,6 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
           </div>
         </section>
       </main>
-
 
       <div className="rp-floating-dock" role="navigation" aria-label="Manager Quick Navigation">
         <div className="rp-floating-pill">
@@ -1221,7 +1177,6 @@ export const UserManagerView: FC<UserManagerViewProps> = ({
         </div>
       </div>
 
-    
       {toast && (
         <div className={`toast-notice ${toast.type} show`}>
           <CheckIcon size={16} />
