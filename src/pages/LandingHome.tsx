@@ -220,7 +220,7 @@ export const AgriSmartApp: React.FC = () => {
               <div className="tree-glow-aura" />
             </div>
             <div className="intro-title">
-              Agri <span>SMART</span>
+              රන් <span>පොළොව</span>
             </div>
             <div className="intro-slogan">From Farm to Market, Smarter.</div>
             <div className="intro-loader-line">
